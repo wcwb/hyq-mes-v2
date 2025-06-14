@@ -1,0 +1,144 @@
+{
+    "greeting": "你好",
+    "menu": {
+        "home": "首页",
+        "about": "关于",
+        "products": "产品",
+        "contact": "联系我们",
+        "dashboard": "仪表板",
+        "repository": "代码仓库",
+        "documentation": "文档"
+    },
+    "button": {
+        "submit": "提交",
+        "cancel": "取消",
+        "save": "保存",
+        "delete": "删除",
+        "edit": "编辑",
+        "login": "登录",
+        "logout": "退出登录"
+    },
+    "form": {
+        "name": "姓名",
+        "email": "邮箱",
+        "password": "密码",
+        "confirmPassword": "确认密码",
+        "login": "登录账号",
+        "rememberMe": "记住我",
+        "forgotPassword": "忘记密码？"
+    },
+    "message": {
+        "success": "操作成功",
+        "error": "操作失败",
+        "loading": "加载中..."
+    },
+    "page": {
+        "dashboard": {
+            "title": "仪表板"
+        },
+        "auth": {
+            "login": {
+                "title": "登录您的账户",
+                "description": "请在下方输入工号/手机号/邮箱和密码进行登录",
+                "pageTitle": "登录",
+                "placeholder": {
+                    "login": "工号/手机号/邮箱",
+                    "password": "密码"
+                }
+            }
+        },
+        "settings": {
+            "appearance": {
+                "title": "外观设置",
+                "description": "更新您账户的外观设置",
+                "pageTitle": "外观设置"
+            }
+        }
+    },
+    "navigation": {
+        "menu": "导航菜单"
+    },
+    "common": {
+        "search": "搜索"
+    },
+    "language": {
+        "switcher": {
+            "button": {
+                "label": "语言切换器，当前选择：{current}"
+            },
+            "description": "选择界面显示语言",
+            "option": {
+                "label": "{language}{current}"
+            },
+            "changed": "语言已切换为{language}"
+        }
+    },
+    "test": {
+        "title": "国际化测试页面",
+        "description": "测试vue-i18n功能，包括语言切换、回退机制和翻译完整性检查",
+        "sections": {
+            "languageSwitcher": "语言切换器",
+            "basicTranslations": "基础翻译测试",
+            "fallbackTests": "回退机制测试",
+            "nestedTranslations": "嵌套翻译测试",
+            "devTools": "开发工具"
+        },
+        "labels": {
+            "greeting": "问候语",
+            "currentLanguage": "当前语言",
+            "supportedLanguages": "支持的语言",
+            "menuItems": "菜单项目",
+            "formFields": "表单字段"
+        }
+    },
+    "site": {
+        "name": "慧越MES管理系统",
+        "description": "先进的制造执行系统，提供生产管理、质量控制、设备监控等完整解决方案"
+    },
+    "meta": {
+        "home": {
+            "title": "首页",
+            "description": "慧越MES管理系统 - 先进的制造执行系统解决方案",
+            "keywords": "MES系统,制造执行,生产管理,质量控制,设备监控"
+        },
+        "dashboard": {
+            "title": "仪表板",
+            "description": "实时查看生产数据、设备状态和关键指标",
+            "keywords": "仪表板,生产数据,设备状态,KPI指标"
+        },
+        "auth": {
+            "login": {
+                "title": "用户登录",
+                "description": "登录慧越MES管理系统，开始您的智能制造之旅",
+                "keywords": "登录,用户认证,MES系统"
+            },
+            "register": {
+                "title": "用户注册",
+                "description": "注册慧越MES管理系统账户",
+                "keywords": "注册,新用户,账户创建"
+            }
+        },
+        "settings": {
+            "appearance": {
+                "title": "外观设置",
+                "description": "个性化您的系统界面外观和主题设置",
+                "keywords": "外观设置,主题,界面定制"
+            },
+            "profile": {
+                "title": "个人资料",
+                "description": "管理您的个人信息和账户设置",
+                "keywords": "个人资料,账户设置,用户信息"
+            },
+            "password": {
+                "title": "密码设置",
+                "description": "更改您的账户密码以确保安全",
+                "keywords": "密码修改,账户安全,安全设置"
+            }
+        },
+        "i18nTest": {
+            "title": "国际化测试",
+            "description": "测试系统的多语言功能和回退机制",
+            "keywords": "国际化,多语言,i18n测试,翻译"
+        }
+    }
+}

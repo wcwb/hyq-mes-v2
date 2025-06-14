@@ -1,0 +1,144 @@
+{
+    "greeting": "Hello",
+    "menu": {
+        "home": "Home",
+        "about": "About",
+        "products": "Products",
+        "contact": "Contact",
+        "dashboard": "Dashboard",
+        "repository": "Repository",
+        "documentation": "Documentation"
+    },
+    "button": {
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "login": "Log in",
+        "logout": "Log out"
+    },
+    "form": {
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "login": "Login",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?"
+    },
+    "message": {
+        "success": "Success",
+        "error": "Error",
+        "loading": "Loading..."
+    },
+    "page": {
+        "dashboard": {
+            "title": "Dashboard"
+        },
+        "auth": {
+            "login": {
+                "title": "Log in to your account",
+                "description": "Enter work number/phone number/email and password below to log in",
+                "pageTitle": "Log in",
+                "placeholder": {
+                    "login": "work number/phone number/email",
+                    "password": "Password"
+                }
+            }
+        },
+        "settings": {
+            "appearance": {
+                "title": "Appearance settings",
+                "description": "Update your account's appearance settings",
+                "pageTitle": "Appearance settings"
+            }
+        }
+    },
+    "navigation": {
+        "menu": "Navigation Menu"
+    },
+    "common": {
+        "search": "Search"
+    },
+    "language": {
+        "switcher": {
+            "button": {
+                "label": "Language switcher, current: {current}"
+            },
+            "description": "Select interface display language",
+            "option": {
+                "label": "{language}{current}"
+            },
+            "changed": "Language changed to {language}"
+        }
+    },
+    "test": {
+        "title": "Internationalization Test Page",
+        "description": "Test vue-i18n functionality including language switching, fallback mechanisms, and translation completeness checks",
+        "sections": {
+            "languageSwitcher": "Language Switcher",
+            "basicTranslations": "Basic Translation Tests",
+            "fallbackTests": "Fallback Mechanism Tests",
+            "nestedTranslations": "Nested Translation Tests",
+            "devTools": "Development Tools"
+        },
+        "labels": {
+            "greeting": "Greeting",
+            "currentLanguage": "Current Language",
+            "supportedLanguages": "Supported Languages",
+            "menuItems": "Menu Items",
+            "formFields": "Form Fields"
+        }
+    },
+    "site": {
+        "name": "HuiYue MES Management System",
+        "description": "Advanced Manufacturing Execution System providing comprehensive solutions for production management, quality control, and equipment monitoring"
+    },
+    "meta": {
+        "home": {
+            "title": "Home",
+            "description": "HuiYue MES Management System - Advanced Manufacturing Execution System Solutions",
+            "keywords": "MES system,manufacturing execution,production management,quality control,equipment monitoring"
+        },
+        "dashboard": {
+            "title": "Dashboard",
+            "description": "Real-time view of production data, equipment status and key metrics",
+            "keywords": "dashboard,production data,equipment status,KPI metrics"
+        },
+        "auth": {
+            "login": {
+                "title": "User Login",
+                "description": "Login to HuiYue MES Management System and start your smart manufacturing journey",
+                "keywords": "login,user authentication,MES system"
+            },
+            "register": {
+                "title": "User Registration",
+                "description": "Register for HuiYue MES Management System account",
+                "keywords": "register,new user,account creation"
+            }
+        },
+        "settings": {
+            "appearance": {
+                "title": "Appearance Settings",
+                "description": "Personalize your system interface appearance and theme settings",
+                "keywords": "appearance settings,theme,interface customization"
+            },
+            "profile": {
+                "title": "Profile",
+                "description": "Manage your personal information and account settings",
+                "keywords": "profile,account settings,user information"
+            },
+            "password": {
+                "title": "Password Settings",
+                "description": "Change your account password to ensure security",
+                "keywords": "password change,account security,security settings"
+            }
+        },
+        "i18nTest": {
+            "title": "Internationalization Test",
+            "description": "Test the system's multilingual functionality and fallback mechanisms",
+            "keywords": "internationalization,multilingual,i18n test,translation"
+        }
+    }
+}
