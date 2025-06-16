@@ -9,14 +9,7 @@ import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { type BreadcrumbItem } from '@/types';
 
-const breadcrumbItems: BreadcrumbItem[] = [
-    {
-        title: 'Password settings',
-        href: '/settings/password',
-    },
-];
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
@@ -51,7 +44,7 @@ const updatePassword = () => {
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbItems">
+    <AppLayout>
         <Head title="Password settings" />
 
         <SettingsLayout>

@@ -6,28 +6,34 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { useI18n } from '@/composables/useI18n';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+// 使用国际化功能
+const { t } = useI18n();
+
+// 使用 computed 确保语言切换时能响应式更新
+const mainNavItems = computed((): NavItem[] => [
     {
-        title: 'Dashboard',
+        title: t('menu.dashboard'),
         href: '/dashboard',
         icon: LayoutGrid,
     },
-];
+]);
 
-const footerNavItems: NavItem[] = [
+const footerNavItems = computed((): NavItem[] => [
     {
-        title: 'Github Repo',
+        title: t('menu.repository'),
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: Folder,
     },
     {
-        title: 'Documentation',
+        title: t('menu.documentation'),
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
-];
+]);
 </script>
 
 <template>
@@ -37,7 +43,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="route('dashboard')">
-                            <AppLogo />
+                        <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

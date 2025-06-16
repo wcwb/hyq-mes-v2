@@ -1,0 +1,317 @@
+---
+description: 测试调试策略规则
+globs: 
+alwaysApply: false
+---
+# 测试调试策略规则
+
+> 基于实际项目经验总结的测试调试最佳实践
+
+## 🚨 核心调试法则
+
+### 📊 3次尝试切换策略法则
+**适用场景**：当现有测试持续失败时
+
+```
+尝试次数 1-3：修复现有测试
+├── 检查语法错误
+├── 验证mock配置
+└── 调整断言逻辑
+
+尝试次数 4+：切换策略
+├── 创建最简单的验证测试
+├── 确认基础功能正常
+└── 再处理复杂场景
+```
+
+### 🔄 渐进式测试策略
+```typescript
+// Level 1: 最基础验证
+it('实例创建验证', () => {
+  const instance = createInstance()
+  expect(instance).toBeDefined()
+})
+
+// Level 2: 接口验证
+it('接口存在性验证', () => {
+  const instance = createInstance()
+  expect(typeof instance.method).toBe('function')
+  expect(typeof instance.property).toBe('string')
+})
+
+// Level 3: 功能验证
+it('基础功能验证', async () => {
+  const instance = createInstance()
+  const result = await instance.method()
+  expect(result).toBeDefined()
+})
+
+// Level 4: 复杂场景
+it('复杂交互验证', async () => {
+  // 只在前面级别全部通过后进行
+})
+```
+
+## 🔍 问题诊断流程
+
+### 第一步：快速排除法
+```typescript
+// 1. 语法检查
+npm run type-check
+
+// 2. 基础功能测试
+it('smoke test', () => {
+  expect(true).toBe(true) // 确保测试环境正常
+})
+
+// 3. 实例创建测试
+it('instance creation', () => {
+  const instance = createTarget()
+  expect(instance).toBeDefined()
+})
+```
+
+### 第二步：接口验证法
+```typescript
+// 验证所有预期的属性和方法都存在
+it('interface validation', () => {
+  const instance = createTarget()
+  
+  // 验证方法
+  expect(typeof instance.expectedMethod).toBe('function')
+  
+  // 验证属性类型
+  expect(typeof instance.expectedProperty).toBe('expectedType')
+  
+  // 验证响应式属性
+  expect(instance.reactiveProperty.value).toBeDefined()
+})
+```
+
+### 第三步：分层隔离法
+```typescript
+// 隔离第三方依赖
+describe('without external dependencies', () => {
+  it('core logic works', () => {
+    // 测试不依赖外部库的核心逻辑
+  })
+})
+
+// 隔离复杂配置
+describe('with minimal config', () => {
+  it('basic functionality', () => {
+    const instance = createTarget({ minimal: true })
+    // 使用最简配置测试
+  })
+})
+```
+
+## 🛠️ Mock策略决策树
+
+```
+需要测试第三方库交互吗？
+├── 是 → 第三方库复杂吗？
+│   ├── 是 → 使用集成测试
+│   └── 否 → 简单mock
+└── 否 → 不需要mock
+```
+
+### 简单Mock模式
+```typescript
+// 适用于：简单的工具函数
+vi.mock('simple-library', () => ({
+  simpleFunction: vi.fn(() => 'mocked result')
+}))
+```
+
+### 集成测试模式
+```typescript
+// 适用于：复杂的状态管理库、UI库等
+describe('integration test', () => {
+  it('works with real dependencies', () => {
+    // 使用真实的依赖库进行测试
+    // 验证接口契约而非内部实现
+  })
+})
+```
+
+## ⚡ 异步测试调试规则
+
+### ✅ 推荐模式
+```typescript
+// 直接await模式
+it('async operation', async () => {
+  const result = await asyncOperation()
+  expect(result).toBe(expected)
+})
+
+// Promise模式
+it('promise operation', () => {
+  return asyncOperation().then(result => {
+    expect(result).toBe(expected)
+  })
+})
+```
+
+### ❌ 避免模式
+```typescript
+// 避免：复杂的回调测试
+it('avoid this pattern', (done) => {
+  let result
+  asyncOperation().then(res => {
+    result = res
+    // 复杂的状态依赖
+  })
+  setTimeout(() => {
+    expect(result).toBe(expected) // result可能未定义
+    done()
+  }, 100)
+})
+```
+
+## 🔧 调试工具集
+
+### 1. 状态快照
+```typescript
+// 调试时输出当前状态
+it('debug state', () => {
+  const instance = createInstance()
+  console.log('Current state:', JSON.stringify(instance.state, null, 2))
+  
+  // 进行操作
+  instance.operation()
+  
+  console.log('After operation:', JSON.stringify(instance.state, null, 2))
+})
+```
+
+### 2. 类型检查器
+```typescript
+// 运行时类型验证辅助函数
+const validateTypes = (obj: any, schema: Record<string, string>) => {
+  Object.entries(schema).forEach(([key, expectedType]) => {
+    const actualType = typeof obj[key]
+    if (actualType !== expectedType) {
+      throw new Error(`Type mismatch: ${key} expected ${expectedType}, got ${actualType}`)
+    }
+  })
+}
+
+it('type validation', () => {
+  const instance = createInstance()
+  validateTypes(instance, {
+    method: 'function',
+    property: 'string',
+    config: 'object'
+  })
+})
+```
+
+### 3. 接口契约验证器
+```typescript
+// 通用接口验证器
+const validateInterface = (instance: any, expectedInterface: any) => {
+  Object.keys(expectedInterface).forEach(key => {
+    expect(instance).toHaveProperty(key)
+    expect(typeof instance[key]).toBe(typeof expectedInterface[key])
+  })
+}
+```
+
+## 🎯 特定场景调试策略
+
+### Vue 3 Composable调试
+```typescript
+// 响应式属性调试
+it('reactivity debug', () => {
+  const { reactive, computed } = createComposable()
+  
+  // 检查响应式类型
+  expect(reactive.value).toBeDefined() // ref 或 reactive
+  expect(computed.value).toBeDefined() // computed
+  
+  // 检查响应式更新
+  const oldValue = computed.value
+  reactive.value = newValue
+  expect(computed.value).not.toBe(oldValue)
+})
+```
+
+### TypeScript类型问题调试
+```typescript
+// 类型断言调试
+it('type assertion debug', () => {
+  const instance = createInstance()
+  
+  // 检查实际类型
+  console.log('Actual type:', typeof instance.property)
+  console.log('Is array:', Array.isArray(instance.list))
+  console.log('Constructor:', instance.constructor.name)
+  
+  // 进行类型验证
+  expect(instance.property).toSatisfy((value) => 
+    typeof value === 'string' || typeof value === 'number'
+  )
+})
+```
+
+## 📋 调试检查清单
+
+### 基础检查
+- [ ] 测试环境是否正常运行
+- [ ] 实例是否能正常创建
+- [ ] 期望的属性和方法是否存在
+- [ ] 类型声明是否与实际一致
+
+### 深度检查  
+- [ ] Mock配置是否正确
+- [ ] 异步操作是否正确等待
+- [ ] 响应式属性是否正确访问
+- [ ] 错误边界是否有适当处理
+
+### 性能检查
+- [ ] 测试执行时间是否合理
+- [ ] 内存泄漏是否存在
+- [ ] 重复创建实例是否有问题
+
+## 🚀 调试效率优化
+
+### 1. 快速反馈循环
+```bash
+# 运行单个测试文件
+npm test -- path/to/test.spec.ts
+
+# 运行特定测试
+npm test -- --grep "specific test name"
+
+# 监视模式
+npm test -- --watch
+```
+
+### 2. 并行调试
+```typescript
+// 多个简单测试并行验证
+describe.concurrent('parallel debugging', () => {
+  it.concurrent('test 1', async () => { /* ... */ })
+  it.concurrent('test 2', async () => { /* ... */ })
+  it.concurrent('test 3', async () => { /* ... */ })
+})
+```
+
+### 3. 条件调试
+```typescript
+// 基于环境的调试信息
+const DEBUG = process.env.NODE_ENV === 'test'
+
+it('conditional debug', () => {
+  const result = performOperation()
+  
+  if (DEBUG) {
+    console.log('Debug info:', result)
+  }
+  
+  expect(result).toBe(expected)
+})
+```
+
+这些规则将帮助在遇到测试问题时快速定位和解决问题，避免在错误的方向上浪费时间。 

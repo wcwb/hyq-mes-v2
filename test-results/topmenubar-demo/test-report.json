@@ -1,0 +1,57 @@
+{
+  "success": false,
+  "errors": [
+    "mobile: Node is either not clickable or not an Element",
+    "tablet: Node is either not clickable or not an Element"
+  ],
+  "warnings": [],
+  "tests": [
+    {
+      "device": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 667,
+        "deviceScaleFactor": 2,
+        "isMobile": true
+      },
+      "success": false,
+      "errors": [
+        "Node is either not clickable or not an Element"
+      ],
+      "warnings": []
+    },
+    {
+      "device": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024,
+        "deviceScaleFactor": 2,
+        "isMobile": false
+      },
+      "success": false,
+      "errors": [
+        "Node is either not clickable or not an Element"
+      ],
+      "warnings": []
+    },
+    {
+      "device": "desktop",
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "deviceScaleFactor": 1,
+        "isMobile": false
+      },
+      "success": true,
+      "errors": [],
+      "warnings": [],
+      "features": {
+        "pageLoaded": true,
+        "searchBar": true,
+        "toolsMenu": "N/A",
+        "userMenu": true,
+        "responsive": true
+      }
+    }
+  ]
+}

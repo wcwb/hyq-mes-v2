@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -11,18 +10,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { useI18n } from '@/composables/useI18n';
-import type { BreadcrumbItem, NavItem } from '@/types';
+import type { NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 
-interface Props {
-    breadcrumbs?: BreadcrumbItem[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
-});
 
 const { t } = useI18n();
 const page = usePage();
@@ -170,10 +162,5 @@ const rightNavItems: NavItem[] = [
             </div>
         </div>
 
-        <div v-if="props.breadcrumbs.length > 1" class="flex w-full border-b border-sidebar-border/70">
-            <div class="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
-                <Breadcrumbs :breadcrumbs="breadcrumbs" />
-            </div>
-        </div>
     </div>
 </template>

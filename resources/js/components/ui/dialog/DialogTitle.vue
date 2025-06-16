@@ -5,19 +5,13 @@ import { computed, type HTMLAttributes } from 'vue'
 
 const props = defineProps<DialogTitleProps & { class?: HTMLAttributes['class'] }>()
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-
-  return delegated
-})
-
-const forwardedProps = useForwardProps(delegatedProps)
+const forwardedProps = useForwardProps(props)
 </script>
 
 <template>
   <DialogTitle
     data-slot="dialog-title"
-    v-bind="forwardedProps"
+    v-bind="{ ...forwardedProps, class: undefined }"
     :class="cn('text-lg leading-none font-semibold', props.class)"
   >
     <slot />

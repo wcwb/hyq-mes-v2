@@ -32,7 +32,7 @@
                         <h3 class="font-medium text-gray-800">当前状态</h3>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-gray-700">当前语言:</span>
+                                <span class="text-gray-700">{{ t('test.labels.currentLanguage') }}:</span>
                                 <span class="font-mono bg-gray-100 px-2 py-1 rounded text-gray-900">{{
                                     getCurrentLocale() }}</span>
                             </div>

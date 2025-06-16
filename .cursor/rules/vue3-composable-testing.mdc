@@ -1,0 +1,222 @@
+---
+description: Composable 测试规则
+globs: 
+alwaysApply: false
+---
+# Vue 3 Composable 测试规则
+
+> 基于子任务5.2 useTabPersistence测试过程中的经验教训总结
+
+## 🎯 响应式属性访问规则
+
+### ✅ DO - 正确的属性访问方式
+```typescript
+// computed 属性需要 .value 访问
+expect(composable.hasValidData.value).toBe(true)
+expect(composable.isExpired.value).toBe(false)
+
+// 只读对象直接访问属性
+expect(composable.config.storageKey).toBe('test-key')
+expect(composable.config.autoSync).toBe(true)
+
+// ref 属性需要 .value 访问
+expect(composable.syncErrors.value.length).toBe(0)
+expect(composable.isLoading.value).toBe(false)
+```
+
+### ❌ DON'T - 错误的访问方式
+```typescript
+// 错误：直接访问computed属性
+expect(composable.hasValidData).toBe(true) // 返回 ComputedRefImpl 对象
+
+// 错误：假设config是ref
+expect(composable.config.value.storageKey).toBe('test-key') // config没有.value
+
+// 错误：混淆不同类型的响应式属性
+expect(composable.readonlyConfig.value).toBe(true) // readonly对象不是ref
+```
+
+### 🔍 验证策略
+在测试composable之前，先验证返回值结构：
+```typescript
+it('应该暴露正确的接口类型', () => {
+  const composable = useMyComposable()
+  
+  // 验证方法存在
+  expect(typeof composable.method).toBe('function')
+  
+  // 验证computed属性
+  expect(typeof composable.computed.value).toBe('boolean')
+  
+  // 验证只读配置
+  expect(typeof composable.config.property).toBe('string')
+  
+  // 验证ref属性
+  expect(Array.isArray(composable.list.value)).toBe(true)
+})
+```
+
+## 🧪 第三方库Mock策略规则
+
+### ✅ DO - 优先使用集成测试
+```typescript
+// 创建简单的集成测试验证接口契约
+describe('useComposable - 接口集成测试', () => {
+  it('应该能够创建实例并暴露正确的接口', () => {
+    const composable = useComposable({
+      storageKey: 'test-key',
+      autoSync: false
+    })
+
+    // 验证接口存在性和类型
+    expect(typeof composable.saveState).toBe('function')
+    expect(typeof composable.loadState).toBe('function')
+    expect(typeof composable.hasValidData.value).toBe('boolean')
+  })
+})
+```
+
+### ❌ DON'T - 过度复杂的Mock
+```typescript
+// 避免：尝试完全模拟第三方库的内部实现
+vi.mock('@vueuse/core', () => ({
+  useLocalStorage: vi.fn((key, defaultValue, options) => {
+    // 复杂的mock实现试图完全模拟useLocalStorage
+    // 这通常导致与实际行为不一致
+  })
+}))
+```
+
+### 🎯 Mock策略选择
+1. **简单验证** → 集成测试
+2. **特定场景** → 最小化mock
+3. **复杂交互** → 分层测试（单元 + 集成）
+
+## ⚡ 异步测试最佳实践
+
+### ✅ DO - 直接调用和验证
+```typescript
+it('应该能够调用异步方法', async () => {
+  const composable = useComposable()
+  
+  // 直接调用并验证结果
+  const saveResult = await composable.saveState(data, 'active-id')
+  const loadResult = await composable.loadState()
+  
+  expect(typeof saveResult).toBe('boolean')
+  expect(loadResult === null || typeof loadResult === 'object').toBe(true)
+})
+```
+
+### ❌ DON'T - 依赖外部变量状态
+```typescript
+it('避免这种模式', async () => {
+  let saveResult: boolean
+  let loadResult: any
+  
+  // 问题：在异步回调中使用可能未初始化的变量
+  expect(async () => {
+    saveResult = await composable.saveState(data, 'active-id')
+  }).not.toThrow()
+  
+  expect(typeof saveResult!).toBe('boolean') // saveResult可能undefined
+})
+```
+
+## 🐛 调试策略规则
+
+### 📊 3次尝试法则
+如果复杂测试失败超过3次尝试，切换策略：
+1. **第1-3次**：尝试修复现有测试
+2. **第4次**：创建最简单的验证测试
+3. **确认基础功能**：再处理复杂场景
+
+### 🔄 渐进式测试策略
+```typescript
+// 第一步：最基础的接口验证
+it('基础接口验证', () => {
+  const composable = useComposable()
+  expect(composable).toBeDefined()
+  expect(typeof composable.method).toBe('function')
+})
+
+// 第二步：核心功能测试
+it('核心功能测试', async () => {
+  const composable = useComposable()
+  const result = await composable.method()
+  expect(result).toBeDefined()
+})
+
+// 第三步：复杂场景测试
+it('复杂场景测试', async () => {
+  // 只在基础功能确认正常后进行
+})
+```
+
+## 🔧 TypeScript类型验证规则
+
+### ✅ 运行时类型验证
+```typescript
+it('应该提供正确的类型契约', () => {
+  const composable = useComposable()
+  
+  // 验证配置对象结构
+  const config = composable.config
+  expect(typeof config.storageKey).toBe('string')
+  expect(typeof config.version).toBe('string')
+  expect(typeof config.autoSync).toBe('boolean')
+  
+  // 验证方法签名
+  expect(composable.saveState).toBeInstanceOf(Function)
+  expect(composable.loadState).toBeInstanceOf(Function)
+  
+  // 验证响应式数据类型
+  expect(Array.isArray(composable.errors.value)).toBe(true)
+  expect(typeof composable.isLoading.value).toBe('boolean')
+})
+```
+
+## 📝 测试模板
+
+### 标准Composable测试结构
+```typescript
+describe('useMyComposable', () => {
+  describe('接口验证', () => {
+    it('应该暴露正确的接口')
+    it('应该处理配置选项')
+  })
+  
+  describe('核心功能', () => {
+    it('应该执行主要操作')
+    it('应该处理错误情况')
+  })
+  
+  describe('响应式特性', () => {
+    it('应该正确更新响应式状态')
+    it('应该触发计算属性更新')
+  })
+  
+  describe('集成测试', () => {
+    it('应该与其他系统正确集成')
+  })
+})
+```
+
+## 🚨 常见错误检查清单
+
+在测试composable时，检查以下常见错误：
+
+- [ ] 是否正确访问computed属性（使用.value）
+- [ ] 是否正确访问config对象（不使用.value）
+- [ ] 是否避免了复杂的第三方库mock
+- [ ] 异步测试是否直接验证结果
+- [ ] 是否有基础接口验证测试
+- [ ] 类型验证是否覆盖运行时检查
+- [ ] 错误处理是否有适当测试
+
+## 🎯 应用指导
+
+1. **开发前**：使用此规则设计测试策略
+2. **开发中**：遇到测试问题时参考相应规则
+3. **代码审查**：使用检查清单进行自检
+4. **团队分享**：确保团队成员了解这些最佳实践 

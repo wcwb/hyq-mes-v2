@@ -1,0 +1,132 @@
+{
+  "summary": {
+    "totalSuites": 6,
+    "successfulSuites": 0,
+    "failedSuites": 6,
+    "totalDuration": 4680,
+    "timestamp": "2025-06-16T12:38:21.906Z",
+    "testEnvironment": {
+      "nodeVersion": "v23.11.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    }
+  },
+  "suites": [
+    {
+      "name": "TopMenuBar组件测试",
+      "file": "topMenuBar.comprehensive.test.cjs",
+      "success": false,
+      "duration": 929,
+      "estimatedTime": "60s",
+      "timestamp": "2025-06-16T12:38:08.145Z",
+      "error": null
+    },
+    {
+      "name": "组件集成测试",
+      "file": "componentIntegration.test.cjs",
+      "success": false,
+      "duration": 614,
+      "estimatedTime": "90s",
+      "timestamp": "2025-06-16T12:38:10.762Z",
+      "error": null
+    },
+    {
+      "name": "SearchBar组件测试",
+      "file": "searchBar.comprehensive.test.cjs",
+      "success": false,
+      "duration": 1291,
+      "estimatedTime": "75s",
+      "timestamp": "2025-06-16T12:38:14.055Z",
+      "error": null
+    },
+    {
+      "name": "全局搜索逻辑测试",
+      "file": "globalSearch.comprehensive.test.cjs",
+      "success": false,
+      "duration": 507,
+      "estimatedTime": "120s",
+      "timestamp": "2025-06-16T12:38:16.564Z",
+      "error": null
+    },
+    {
+      "name": "响应式设计测试",
+      "file": "responsiveDesign.test.cjs",
+      "success": false,
+      "duration": 769,
+      "estimatedTime": "90s",
+      "timestamp": "2025-06-16T12:38:19.334Z",
+      "error": null
+    },
+    {
+      "name": "无障碍功能测试",
+      "file": "accessibility.comprehensive.test.cjs",
+      "success": false,
+      "duration": 570,
+      "estimatedTime": "100s",
+      "timestamp": "2025-06-16T12:38:21.906Z",
+      "error": null
+    }
+  ],
+  "details": [
+    {
+      "suite": "TopMenuBar组件测试",
+      "file": "topMenuBar.comprehensive.test.cjs",
+      "success": false,
+      "duration": 929,
+      "estimatedTime": "60s",
+      "stdout": "",
+      "stderr": "Error: Can't find a root directory while resolving a config file path.\nProvided path to resolve: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/jest.config.cjs\ncwd: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/e2e\n    at resolveConfigPath (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/resolveConfigPath.js:123:11)\n    at readInitialOptions (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:386:55)\n    at readConfig (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:147:54)\n    at readConfigs (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:424:32)\n    at runCLI (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/@jest/core/build/cli/index.js:152:29)\n    at Object.run (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-cli/build/run.js:130:62)\n",
+      "timestamp": "2025-06-16T12:38:08.145Z"
+    },
+    {
+      "suite": "组件集成测试",
+      "file": "componentIntegration.test.cjs",
+      "success": false,
+      "duration": 614,
+      "estimatedTime": "90s",
+      "stdout": "",
+      "stderr": "Error: Can't find a root directory while resolving a config file path.\nProvided path to resolve: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/jest.config.cjs\ncwd: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/e2e\n    at resolveConfigPath (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/resolveConfigPath.js:123:11)\n    at readInitialOptions (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:386:55)\n    at readConfig (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:147:54)\n    at readConfigs (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:424:32)\n    at runCLI (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/@jest/core/build/cli/index.js:152:29)\n    at Object.run (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-cli/build/run.js:130:62)\n",
+      "timestamp": "2025-06-16T12:38:10.762Z"
+    },
+    {
+      "suite": "SearchBar组件测试",
+      "file": "searchBar.comprehensive.test.cjs",
+      "success": false,
+      "duration": 1291,
+      "estimatedTime": "75s",
+      "stdout": "",
+      "stderr": "Error: Can't find a root directory while resolving a config file path.\nProvided path to resolve: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/jest.config.cjs\ncwd: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/e2e\n    at resolveConfigPath (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/resolveConfigPath.js:123:11)\n    at readInitialOptions (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:386:55)\n    at readConfig (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:147:54)\n    at readConfigs (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:424:32)\n    at runCLI (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/@jest/core/build/cli/index.js:152:29)\n    at Object.run (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-cli/build/run.js:130:62)\n",
+      "timestamp": "2025-06-16T12:38:14.055Z"
+    },
+    {
+      "suite": "全局搜索逻辑测试",
+      "file": "globalSearch.comprehensive.test.cjs",
+      "success": false,
+      "duration": 507,
+      "estimatedTime": "120s",
+      "stdout": "",
+      "stderr": "Error: Can't find a root directory while resolving a config file path.\nProvided path to resolve: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/jest.config.cjs\ncwd: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/e2e\n    at resolveConfigPath (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/resolveConfigPath.js:123:11)\n    at readInitialOptions (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:386:55)\n    at readConfig (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:147:54)\n    at readConfigs (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:424:32)\n    at runCLI (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/@jest/core/build/cli/index.js:152:29)\n    at Object.run (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-cli/build/run.js:130:62)\n",
+      "timestamp": "2025-06-16T12:38:16.564Z"
+    },
+    {
+      "suite": "响应式设计测试",
+      "file": "responsiveDesign.test.cjs",
+      "success": false,
+      "duration": 769,
+      "estimatedTime": "90s",
+      "stdout": "",
+      "stderr": "Error: Can't find a root directory while resolving a config file path.\nProvided path to resolve: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/jest.config.cjs\ncwd: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/e2e\n    at resolveConfigPath (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/resolveConfigPath.js:123:11)\n    at readInitialOptions (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:386:55)\n    at readConfig (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:147:54)\n    at readConfigs (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:424:32)\n    at runCLI (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/@jest/core/build/cli/index.js:152:29)\n    at Object.run (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-cli/build/run.js:130:62)\n",
+      "timestamp": "2025-06-16T12:38:19.334Z"
+    },
+    {
+      "suite": "无障碍功能测试",
+      "file": "accessibility.comprehensive.test.cjs",
+      "success": false,
+      "duration": 570,
+      "estimatedTime": "100s",
+      "stdout": "",
+      "stderr": "Error: Can't find a root directory while resolving a config file path.\nProvided path to resolve: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/jest.config.cjs\ncwd: /Users/jameswang/Codes/hyq-mes-v2/tests/frontend/e2e\n    at resolveConfigPath (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/resolveConfigPath.js:123:11)\n    at readInitialOptions (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:386:55)\n    at readConfig (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:147:54)\n    at readConfigs (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-config/build/index.js:424:32)\n    at runCLI (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/@jest/core/build/cli/index.js:152:29)\n    at Object.run (/Users/jameswang/.npm/_npx/b8d86e6551a4f492/node_modules/jest-cli/build/run.js:130:62)\n",
+      "timestamp": "2025-06-16T12:38:21.906Z"
+    }
+  ]
+}

@@ -47,3 +47,9 @@ node_modules/
 # Task files
 tasks.json
 tasks/ 
+
+# MCP Configuration (contains API keys)
+.cursor/mcp.json
+
+# Taskmaster config with potentially sensitive data
+.taskmaster/config.json 

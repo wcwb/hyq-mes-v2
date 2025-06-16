@@ -20,3 +20,170 @@ autoAttach: true
 - 避免使用 magic number（如 px-13、w-[333px]）。
 - 推荐使用组件化的 class 提取方案，例如 @apply btn-base。
 - 只用 Tailwind CSS 类名，不要在 <style> 或者 <style scoped> 里写 @apply。
+
+## **工具类优先原则（Utility-First Fundamentals）**
+- **必须使用 Tailwind CSS 工具类**：所有样式通过组合小的、单一用途的工具类来构建
+- **禁止使用传统 CSS**：不允许使用 `<style>` 标签、`<style scoped>` 或 `style=""` 内联样式
+- **组合而非自定义**：优先组合现有工具类，而不是编写自定义 CSS
+  ```vue
+  <!-- ✅ 正确：使用工具类组合 -->
+  <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-900">标题</h2>
+  </div>
+  
+  <!-- ❌ 错误：使用自定义样式 -->
+  <div style="display: flex; padding: 1rem;">
+  ```
+
+## **响应式设计（Responsive Design）**
+- **移动优先设计**：默认为移动端样式，使用断点前缀扩展到更大屏幕
+- **标准断点使用**：`sm:` (640px+), `md:` (768px+), `lg:` (1024px+), `xl:` (1280px+), `2xl:` (1536px+)
+- **响应式布局示例**：
+  ```vue
+  <!-- 响应式网格布局 -->
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <!-- 内容 -->
+  </div>
+  
+  <!-- 响应式文字大小 -->
+  <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold">
+    响应式标题
+  </h1>
+  
+  <!-- 响应式间距 -->
+  <div class="p-4 sm:p-6 lg:p-8">
+    <!-- 内容 -->
+  </div>
+  ```
+
+## **交互状态管理（Hover, Focus & Other States）**
+- **状态修饰符使用**：合理使用 `hover:`、`focus:`、`active:`、`disabled:` 等状态修饰符
+- **可访问性优先**：确保焦点状态明显，支持键盘导航
+  ```vue
+  <!-- 交互式按钮 -->
+  <button class="px-4 py-2 text-white bg-blue-600 rounded-md 
+                 hover:bg-blue-700 focus:outline-none focus:ring-2 
+                 focus:ring-blue-500 focus:ring-offset-2 
+                 disabled:opacity-50 disabled:cursor-not-allowed
+                 transition-colors duration-200">
+    提交
+  </button>
+  
+  <!-- 交互式链接 -->
+  <a href="#" class="text-blue-600 hover:text-blue-800 
+                     hover:underline focus:outline-none 
+                     focus:ring-2 focus:ring-blue-500 rounded">
+    查看详情
+  </a>
+  ```
+
+## **暗色模式支持（Dark Mode）**
+- **暗色模式类使用**：使用 `dark:` 修饰符为暗色模式提供样式
+- **语义化颜色**：优先使用语义化颜色类而非具体颜色值
+  ```vue
+  <!-- 支持暗色模式的组件 -->
+  <div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 
+              border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+      标题
+    </h3>
+    <p class="text-gray-600 dark:text-gray-300 mt-2">
+      内容描述
+    </p>
+  </div>
+  ```
+
+## **样式复用策略（Reusing Styles）**
+- **组件提取**：将重复的样式组合提取为 Vue 组件
+- **工具类组合**：通过组合工具类创建可复用的样式模式
+- **避免 @apply**：在 Vue 组件中不使用 `@apply` 指令，保持工具类的可见性
+  ```vue
+  <!-- ✅ 正确：组件化复用 -->
+  <script setup lang="ts">
+  // 定义可复用的样式组合
+  const buttonBaseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors';
+  const buttonVariants = {
+    primary: 'bg-blue-600 text-white hover:bg-blue-700',
+    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+    danger: 'bg-red-600 text-white hover:bg-red-700'
+  };
+  </script>
+  
+  <template>
+    <button :class="[buttonBaseClasses, buttonVariants.primary]">
+      主要按钮
+    </button>
+  </template>
+  ```
+
+## **设计系统约束**
+- **间距系统**：使用 Tailwind 的间距比例（0, 1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64）
+- **字体系统**：使用预定义的字体大小和行高组合
+- **颜色系统**：使用调色板中的标准颜色，避免任意值
+  ```vue
+  <!-- ✅ 正确：使用设计系统 -->
+  <div class="p-4 text-lg leading-7 text-gray-800">
+  
+  <!-- ❌ 错误：使用任意值 -->
+  <div class="p-[13px] text-[17px] leading-[1.3] text-[#333333]">
+  ```
+
+## **性能优化原则**
+- **避免任意值**：尽量使用预设值，减少 CSS 生成
+- **类名优化**：避免重复或冗余的类名组合
+- **条件类名**：使用计算属性或函数来动态生成类名
+  ```vue
+  <script setup lang="ts">
+  import { computed } from 'vue';
+  
+  // 动态类名计算
+  const cardClasses = computed(() => [
+    'rounded-lg border p-6 transition-shadow',
+    isActive.value 
+      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
+      : 'border-gray-200 bg-white dark:bg-gray-800',
+    isLoading.value && 'opacity-50 pointer-events-none'
+  ]);
+  </script>
+  ```
+
+## **代码组织规范**
+- **类名排序**：按照功能分组排列类名（布局 → 间距 → 字体 → 颜色 → 边框 → 效果）
+- **长类名换行**：超过一行的类名要合理换行
+  ```vue
+  <!-- 推荐的类名排序 -->
+  <div class="flex items-center justify-between 
+              w-full max-w-md mx-auto p-4 
+              text-lg font-semibold text-gray-900 
+              bg-white border border-gray-200 rounded-lg 
+              shadow-sm hover:shadow-md transition-shadow">
+  ```
+
+## **可访问性要求**
+- **焦点可见性**：所有交互元素必须有明显的焦点状态
+- **颜色对比度**：确保文字颜色与背景有足够对比度
+- **语义化标记**：结合 ARIA 属性使用适当的颜色类
+  ```vue
+  <!-- 可访问性友好的表单元素 -->
+  <input class="w-full px-3 py-2 text-gray-900 bg-white border border-gray-300 
+                rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+                focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+         :aria-invalid="hasError"
+         :class="hasError && 'border-red-500 focus:ring-red-500'">
+  ```
+
+## **错误避免**
+- **❌ 禁止使用任意值**：避免 `w-[333px]`、`text-[#ff0000]` 等任意值
+- **❌ 禁止内联样式**：不使用 `style` 属性
+- **❌ 禁止混合 CSS**：不在同一组件中混合 Tailwind 类和自定义 CSS
+- **❌ 禁止重复前缀**：避免 `sm:text-sm sm:font-medium` 这样的重复
+
+## **最佳实践检查清单**
+- [ ] 所有样式都使用 Tailwind 工具类
+- [ ] 组件在所有断点下都正确显示
+- [ ] 交互状态（hover、focus）都已定义
+- [ ] 支持暗色模式（如果项目需要）
+- [ ] 类名按照逻辑分组排列
+- [ ] 重复的样式组合已提取为组件
+- [ ] 所有交互元素都有可访问性支持
+- [ ] 避免使用任意值和 magic number

@@ -1,5 +1,12 @@
 {
     "greeting": "Hello",
+    "common": {
+        "clear": "Clear",
+        "close": "Close",
+        "open": "Open",
+        "search": "Search",
+        "status": "Status"
+    },
     "menu": {
         "home": "Home",
         "about": "About",
@@ -34,7 +41,17 @@
     },
     "page": {
         "dashboard": {
-            "title": "Dashboard"
+            "title": "Dashboard",
+            "seoDemo": {
+                "title": "SEO Meta Tags Demo",
+                "pageTitle": "Page Title",
+                "description": "Description",
+                "keywords": "Keywords",
+                "currentLanguage": "Current Language",
+                "htmlLang": "HTML lang Attribute",
+                "canonicalUrl": "Canonical URL",
+                "explanation": "Page title, meta description and keywords will automatically update based on current language settings. All SEO-related elements will update in real-time when switching languages."
+            }
         },
         "auth": {
             "login": {
@@ -48,27 +65,192 @@
             }
         },
         "settings": {
+            "title": "Settings",
             "appearance": {
                 "title": "Appearance settings",
                 "description": "Update your account's appearance settings",
                 "pageTitle": "Appearance settings"
             }
+        },
+        "i18nTest": {
+            "title": "Internationalization Test"
+        },
+        "test": {
+            "title": "Test Page",
+            "topMenuBar": {
+                "title": "Top Menu Bar Test"
+            }
+        },
+        "demo": {
+            "title": "Demo Page"
         }
     },
     "navigation": {
         "menu": "Navigation Menu"
     },
-    "common": {
-        "search": "Search"
+    "topMenuBar": {
+        "sidebar": {
+            "toggle": "Toggle sidebar"
+        },
+        "search": {
+            "placeholder": "Search pages, orders, products...",
+            "tooltip": "Open global search (⌘K)",
+            "shortcut": "⌘K"
+        },
+        "language": {
+            "toggle": "Switch language",
+            "tooltip": "Switch language",
+            "label": "Select Language",
+            "current": "Current Language",
+            "switched": "Language switched to {language}"
+        },
+        "theme": {
+            "toggle": "Switch theme",
+            "tooltip": "Switch theme",
+            "light": "Light theme",
+            "dark": "Dark theme",
+            "system": "System theme",
+            "changed": "Theme switched to {theme}"
+        },
+        "user": {
+            "menu": "User menu",
+            "profile": "Profile",
+            "settings": "Settings",
+            "logout": "Log out"
+        },
+        "mobile": {
+            "tools": "Tools menu",
+            "description": "Access language, theme and system settings",
+            "language": "Language settings",
+            "theme": "Theme settings",
+            "system": "System settings"
+        },
+        "aria": {
+            "mainNavigation": "Main navigation",
+            "searchShortcut": "Search shortcut",
+            "themeControl": "Theme control",
+            "userMenuControl": "User menu control"
+        }
+    },
+    "search": {
+        "placeholder": "Search pages, orders, products...",
+        "shortcut": "⌘K",
+        "suggestions": {
+            "orders": "Order Management",
+            "products": "Product Management",
+            "customers": "Customer Management",
+            "settings": "System Settings"
+        },
+        "error": {
+            "queryTooLong": "Search query is too long",
+            "invalidQuery": "Invalid search content",
+            "executionFailed": "Search execution failed",
+            "apiFailure": "Search service is temporarily unavailable, please try again later"
+        },
+        "aria": {
+            "label": "Search",
+            "description": "Open global search dialog",
+            "resultsLabel": "Search results list",
+            "opened": "Search dialog opened",
+            "closed": "Search dialog closed",
+            "noResults": "No search results found",
+            "resultsCount": "Found {count} results",
+            "resultSelected": "Result {current} of {total}",
+            "resultLabel": "{title} - {type}, item {position}",
+            "searchInstructions": "Type keywords to search, use arrow keys to navigate results, press enter to select",
+            "keyboardShortcuts": "Keyboard shortcuts: Arrow keys to navigate, Enter to select, Esc to close"
+        },
+        "dialog": {
+            "title": "Search",
+            "placeholder": "Type to search...",
+            "noResults": "No results found",
+            "noResultsHint": "Try searching with different keywords",
+            "loading": "Searching...",
+            "suggestions": "Suggestions",
+            "keyboardHints": {
+                "navigate": "Use arrow keys to navigate",
+                "select": "Press enter to select"
+            }
+        },
+        "categories": {
+            "pages": "Pages",
+            "orders": "Orders",
+            "products": "Products",
+            "users": "Users",
+            "settings": "Settings"
+        }
+    },
+    "searchBar": {
+        "placeholder": "Search pages, orders, products...",
+        "shortcut": "⌘K",
+        "aria": {
+            "label": "Search",
+            "description": "Open global search dialog",
+            "resultsLabel": "Search results list",
+            "opened": "Search dialog opened",
+            "closed": "Search dialog closed",
+            "noResults": "No search results found",
+            "resultsCount": "Found {count} results",
+            "resultSelected": "Result {current} of {total}",
+            "resultLabel": "{title} - {type}, item {position}",
+            "searchInstructions": "Type keywords to search, use arrow keys to navigate results, press enter to select",
+            "keyboardShortcuts": "Keyboard shortcuts: Arrow keys to navigate, Enter to select, Esc to close"
+        },
+        "dialog": {
+            "title": "Search",
+            "placeholder": "Type to search...",
+            "noResults": "No results found",
+            "noResultsHint": "Try searching with different keywords for \"{query}\"",
+            "loading": "Searching...",
+            "suggestions": "Suggestions",
+            "keyboardHints": {
+                "navigate": "Use arrow keys to navigate",
+                "select": "Press enter to select"
+            }
+        },
+        "categories": {
+            "pages": "Pages",
+            "orders": "Orders",
+            "products": "Products",
+            "users": "Users",
+            "settings": "Settings"
+        }
+    },
+    "tabs": {
+        "close": "Close tab",
+        "closeOthers": "Close other tabs",
+        "closeAll": "Close all tabs",
+        "management": "Tab Management",
+        "reorder": "Reorder tabs",
+        "tabList": "Tab list"
+    },
+    "tabContent": {
+        "loading": "Loading...",
+        "loadError": "Load failed",
+        "unknownError": "Unknown error",
+        "retry": "Retry",
+        "noComponentDefined": "No component defined",
+        "maxRetriesExceeded": "Maximum retries exceeded",
+        "noContent": "No content",
+        "selectTab": "Please select a tab",
+        "loadingAsync": "Loading asynchronously...",
+        "loadingTimeout": "Loading timeout"
+    },
+    "accessibility": {
+        "skipToMain": "Skip to main content",
+        "loading": "Loading",
+        "error": "Error occurred",
+        "focusManagement": "Focus management",
+        "keyboardNavigation": "Keyboard navigation"
     },
     "language": {
         "switcher": {
-            "button": {
-                "label": "Language switcher, current: {current}"
-            },
+            "button": "Switch Language",
+            "currentLanguage": "Current Language",
             "description": "Select interface display language",
             "option": {
-                "label": "{language}{current}"
+                "label": "{language}{current}",
+                "current": " (current)"
             },
             "changed": "Language changed to {language}"
         }
@@ -86,6 +268,7 @@
         "labels": {
             "greeting": "Greeting",
             "currentLanguage": "Current Language",
+            "currentTheme": "Current Theme",
             "supportedLanguages": "Supported Languages",
             "menuItems": "Menu Items",
             "formFields": "Form Fields"

@@ -1,5 +1,12 @@
 {
     "greeting": "你好",
+    "common": {
+        "clear": "清空",
+        "close": "关闭",
+        "open": "打开",
+        "search": "搜索",
+        "status": "状态"
+    },
     "menu": {
         "home": "首页",
         "about": "关于",
@@ -34,7 +41,17 @@
     },
     "page": {
         "dashboard": {
-            "title": "仪表板"
+            "title": "仪表板",
+            "seoDemo": {
+                "title": "SEO Meta标签演示",
+                "pageTitle": "页面标题",
+                "description": "描述",
+                "keywords": "关键词",
+                "currentLanguage": "当前语言",
+                "htmlLang": "HTML lang属性",
+                "canonicalUrl": "Canonical URL",
+                "explanation": "页面标题、Meta描述和关键词会根据当前语言设置自动更新。切换语言时，所有SEO相关元素都会实时更新。"
+            }
         },
         "auth": {
             "login": {
@@ -48,27 +65,193 @@
             }
         },
         "settings": {
+            "title": "设置",
             "appearance": {
                 "title": "外观设置",
                 "description": "更新您账户的外观设置",
                 "pageTitle": "外观设置"
             }
+        },
+        "i18nTest": {
+            "title": "国际化测试"
+        },
+        "test": {
+            "title": "测试页面",
+            "topMenuBar": {
+                "title": "顶部菜单栏测试"
+            }
+        },
+        "demo": {
+            "title": "演示页面"
         }
     },
     "navigation": {
         "menu": "导航菜单"
     },
-    "common": {
-        "search": "搜索"
+    "topMenuBar": {
+        "sidebar": {
+            "toggle": "切换侧边栏"
+        },
+        "search": {
+            "placeholder": "搜索页面、订单、产品...",
+            "tooltip": "打开全局搜索 (⌘K)",
+            "shortcut": "⌘K"
+        },
+        "language": {
+            "toggle": "切换语言",
+            "tooltip": "切换语言",
+            "label": "选择语言",
+            "current": "当前语言",
+            "switched": "语言已切换为{language}"
+        },
+        "theme": {
+            "toggle": "切换主题",
+            "tooltip": "切换主题",
+            "light": "浅色主题",
+            "dark": "深色主题",
+            "system": "系统主题",
+            "changed": "主题已切换为{theme}"
+        },
+        "user": {
+            "menu": "用户菜单",
+            "profile": "个人资料",
+            "settings": "设置",
+            "logout": "退出登录"
+        },
+        "mobile": {
+            "tools": "工具菜单",
+            "description": "访问语言、主题和系统设置",
+            "language": "语言设置",
+            "theme": "主题设置",
+            "system": "系统设置"
+        },
+        "aria": {
+            "mainNavigation": "主导航栏",
+            "searchShortcut": "搜索快捷键",
+            "themeControl": "主题控制",
+            "searchBar": "搜索栏",
+            "userMenuControl": "用户菜单控制"
+        }
+    },
+    "search": {
+        "placeholder": "搜索页面、订单、产品...",
+        "shortcut": "⌘K",
+        "suggestions": {
+            "orders": "订单管理",
+            "products": "产品管理",
+            "customers": "客户管理",
+            "settings": "系统设置"
+        },
+        "error": {
+            "queryTooLong": "搜索关键词过长",
+            "invalidQuery": "无效的搜索内容",
+            "executionFailed": "搜索执行失败",
+            "apiFailure": "搜索服务暂时不可用，请稍后重试"
+        },
+        "aria": {
+            "label": "搜索",
+            "description": "打开全局搜索对话框",
+            "resultsLabel": "搜索结果列表",
+            "opened": "搜索对话框已打开",
+            "closed": "搜索对话框已关闭",
+            "noResults": "未找到搜索结果",
+            "resultsCount": "找到 {count} 个结果",
+            "resultSelected": "第 {current} 个结果，共 {total} 个",
+            "resultLabel": "{title} - {type}，第 {position} 项",
+            "searchInstructions": "输入关键词进行搜索，使用上下箭头键导航结果，按回车键选择",
+            "keyboardShortcuts": "键盘快捷键：上下箭头导航，回车选择，Esc 关闭"
+        },
+        "dialog": {
+            "title": "搜索",
+            "placeholder": "输入搜索内容...",
+            "noResults": "未找到相关结果",
+            "noResultsHint": "尝试使用不同的关键词搜索",
+            "loading": "搜索中...",
+            "suggestions": "推荐搜索",
+            "keyboardHints": {
+                "navigate": "使用上下箭头导航",
+                "select": "按回车选择"
+            }
+        },
+        "categories": {
+            "pages": "页面",
+            "orders": "订单",
+            "products": "产品",
+            "users": "用户",
+            "settings": "设置"
+        }
+    },
+    "searchBar": {
+        "placeholder": "搜索页面、订单、产品...",
+        "shortcut": "⌘K",
+        "aria": {
+            "label": "搜索",
+            "description": "打开全局搜索对话框",
+            "resultsLabel": "搜索结果列表",
+            "opened": "搜索对话框已打开",
+            "closed": "搜索对话框已关闭",
+            "noResults": "未找到搜索结果",
+            "resultsCount": "找到 {count} 个结果",
+            "resultSelected": "第 {current} 个结果，共 {total} 个",
+            "resultLabel": "{title} - {type}，第 {position} 项",
+            "searchInstructions": "输入关键词进行搜索，使用上下箭头键导航结果，按回车键选择",
+            "keyboardShortcuts": "键盘快捷键：上下箭头导航，回车选择，Esc 关闭"
+        },
+        "dialog": {
+            "title": "搜索",
+            "placeholder": "输入搜索内容...",
+            "noResults": "未找到相关结果",
+            "noResultsHint": "尝试使用不同的关键词搜索",
+            "loading": "搜索中...",
+            "suggestions": "推荐搜索",
+            "keyboardHints": {
+                "navigate": "使用上下箭头导航",
+                "select": "按回车选择"
+            }
+        },
+        "categories": {
+            "pages": "页面",
+            "orders": "订单",
+            "products": "产品",
+            "users": "用户",
+            "settings": "设置"
+        }
+    },
+    "tabs": {
+        "close": "关闭标签",
+        "closeOthers": "关闭其他标签页",
+        "closeAll": "关闭所有标签页",
+        "management": "Tab管理",
+        "reorder": "重新排序标签页",
+        "tabList": "标签页列表"
+    },
+    "tabContent": {
+        "loading": "加载中...",
+        "loadError": "加载失败",
+        "unknownError": "未知错误",
+        "retry": "重试",
+        "noComponentDefined": "未定义组件",
+        "maxRetriesExceeded": "超过最大重试次数",
+        "noContent": "暂无内容",
+        "selectTab": "请选择一个标签页",
+        "loadingAsync": "异步加载中...",
+        "loadingTimeout": "加载超时"
+    },
+    "accessibility": {
+        "skipToMain": "跳转到主内容",
+        "loading": "加载中",
+        "error": "发生错误",
+        "focusManagement": "焦点管理",
+        "keyboardNavigation": "键盘导航"
     },
     "language": {
         "switcher": {
-            "button": {
-                "label": "语言切换器，当前选择：{current}"
-            },
+            "button": "语言切换",
+            "currentLanguage": "当前语言",
             "description": "选择界面显示语言",
             "option": {
-                "label": "{language}{current}"
+                "label": "{language}{current}",
+                "current": " (当前)"
             },
             "changed": "语言已切换为{language}"
         }
@@ -86,6 +269,7 @@
         "labels": {
             "greeting": "问候语",
             "currentLanguage": "当前语言",
+            "currentTheme": "当前主题",
             "supportedLanguages": "支持的语言",
             "menuItems": "菜单项目",
             "formFields": "表单字段"

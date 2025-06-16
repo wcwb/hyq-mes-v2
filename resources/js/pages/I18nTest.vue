@@ -18,10 +18,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- 测试状态显示 -->
                     <div class="space-y-4">
-                        <h3 class="font-medium text-gray-800">当前状态</h3>
+                        <h3 class="font-medium text-gray-800">{{ t('common.status') }}</h3>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span>当前语言:</span>
+                                <span>{{ t('test.labels.currentLanguage') }}:</span>
                                 <span class="font-mono bg-gray-100 px-2 py-1 rounded">{{ currentLocale }}</span>
                             </div>
                             <div class="flex justify-between">

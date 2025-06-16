@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Vue 3 前端开发规则。
+# Vue 3 前端开发规则（基于 Reka UI v2）
 
 ---
 
@@ -18,10 +18,289 @@ alwaysApply: true
 3. **遵循框架最佳实践**：使用 Vue 3 官方推荐的 Composition API 和 script setup 语法。
 4. **检查版本兼容性**：确保使用的 API 与当前 Vue 版本兼容。
 5. **优先使用组合模式**：优先使用 composables 而不是 mixins 来复用逻辑。
+6. **严格遵守国际化原则**：**绝对禁止硬编码任何显示文本**，所有用户界面文本必须使用 i18n 国际化系统。
 
-## 3. Vue 3 + Inertia.js + TypeScript 开发规范
+## 3. Vue 3 + Reka UI v2 + TypeScript 开发规范
 
-### 3.1 组件开发规范
+### 3.1 Reka UI v2 组件库规范
+
+1. **组件库架构**：
+   - **Reka UI v2**：无样式原始组件库，提供行为逻辑和无障碍性
+   - **项目 UI 组件**：基于 Reka UI 构建的样式化组件
+   - **设计系统**：遵循 WAI-ARIA 设计模式和无障碍性标准
+
+2. **Reka UI 组件导入规范**：
+   ```vue
+   <script setup lang="ts">
+   // ✅ 正确：从 reka-ui 导入原始组件
+   import {
+     ContextMenuRoot,
+     ContextMenuTrigger,
+     ContextMenuContent,
+     ContextMenuItem,
+     ContextMenuPortal
+   } from 'reka-ui';
+   
+   // ✅ 正确：从项目 UI 组件库导入样式化组件
+   import { Button } from '@/components/ui/button';
+   import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+   
+   // ❌ 错误：不要混合使用不同的 UI 库
+   import { NButton } from 'naive-ui';
+   import { ElButton } from 'element-plus';
+   </script>
+   ```
+
+3. **Context Menu 组件使用规范**（基于任务9）：
+   ```vue
+   <script setup lang="ts">
+   import {
+     ContextMenuRoot,
+     ContextMenuTrigger,
+     ContextMenuContent,
+     ContextMenuItem,
+     ContextMenuPortal,
+     ContextMenuSeparator,
+     ContextMenuSub,
+     ContextMenuSubTrigger,
+     ContextMenuSubContent
+   } from 'reka-ui';
+   import { useI18n } from 'vue-i18n';
+   
+   const { t } = useI18n();
+   
+   // 定义菜单项类型
+   interface MenuItem {
+     id: string;
+     label: string;
+     action: () => void;
+     disabled?: boolean;
+     separator?: boolean;
+     shortcut?: string;
+   }
+   
+   // 标签页上下文菜单项
+   const menuItems: MenuItem[] = [
+     {
+       id: 'close',
+       label: t('tab.close'),
+       action: () => closeTab(),
+       shortcut: 'Ctrl+W'
+     },
+     {
+       id: 'close-others',
+       label: t('tab.closeOthers'),
+       action: () => closeOtherTabs()
+     },
+     {
+       id: 'close-all',
+       label: t('tab.closeAll'),
+       action: () => closeAllTabs()
+     },
+     {
+       id: 'duplicate',
+       label: t('tab.duplicate'),
+       action: () => duplicateTab()
+     }
+   ];
+   </script>
+   
+   <template>
+     <ContextMenuRoot>
+       <ContextMenuTrigger as-child>
+         <!-- 标签页内容 -->
+         <div class="tab-content">
+           {{ tabTitle }}
+         </div>
+       </ContextMenuTrigger>
+       
+       <ContextMenuPortal>
+         <ContextMenuContent
+           class="context-menu-content"
+           :side-offset="5"
+           :align="'start'"
+         >
+           <ContextMenuItem
+             v-for="item in menuItems"
+             :key="item.id"
+             class="context-menu-item"
+             :disabled="item.disabled"
+             @select="item.action"
+           >
+             <span>{{ item.label }}</span>
+             <span v-if="item.shortcut" class="shortcut">
+               {{ item.shortcut }}
+             </span>
+           </ContextMenuItem>
+         </ContextMenuContent>
+       </ContextMenuPortal>
+     </ContextMenuRoot>
+   </template>
+   
+   <style scoped>
+   .context-menu-content {
+     @apply min-w-[220px] bg-white border border-gray-200 rounded-md shadow-lg p-1;
+   }
+   
+   .context-menu-item {
+     @apply flex items-center justify-between px-2 py-1.5 text-sm rounded cursor-pointer;
+     @apply hover:bg-gray-100 focus:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed;
+   }
+   
+   .shortcut {
+     @apply text-xs text-gray-500;
+   }
+   </style>
+   ```
+
+4. **Combobox / SelectMenu 组件使用规范**：
+   ```vue
+   <script setup lang="ts">
+   import {
+     ComboboxRoot,
+     ComboboxAnchor,
+     ComboboxInput,
+     ComboboxTrigger,
+     ComboboxContent,
+     ComboboxItem,
+     ComboboxItemIndicator
+   } from 'reka-ui';
+   
+   interface SelectOption {
+     value: string;
+     label: string;
+     disabled?: boolean;
+     icon?: string;
+   }
+   
+   interface Props {
+     options: SelectOption[];
+     placeholder?: string;
+     multiple?: boolean;
+     searchable?: boolean;
+   }
+   
+   const props = withDefaults(defineProps<Props>(), {
+     placeholder: () => t('common.selectPlaceholder'),
+     multiple: false,
+     searchable: true
+   });
+   
+   const modelValue = defineModel<string | string[]>();
+   const searchTerm = ref('');
+   
+   // 过滤选项
+   const filteredOptions = computed(() => {
+     if (!searchTerm.value) return props.options;
+     return props.options.filter(option =>
+       option.label.toLowerCase().includes(searchTerm.value.toLowerCase())
+     );
+   });
+   </script>
+   
+   <template>
+     <ComboboxRoot
+       v-model="modelValue"
+       :multiple="multiple"
+       class="combobox-root"
+     >
+       <ComboboxAnchor class="combobox-anchor">
+         <ComboboxInput
+           v-if="searchable"
+           v-model="searchTerm"
+           class="combobox-input"
+           :placeholder="placeholder"
+         />
+         <ComboboxTrigger v-else class="combobox-trigger">
+           {{ displayValue || placeholder }}
+         </ComboboxTrigger>
+       </ComboboxAnchor>
+       
+       <ComboboxContent class="combobox-content">
+         <ComboboxItem
+           v-for="option in filteredOptions"
+           :key="option.value"
+           :value="option.value"
+           :disabled="option.disabled"
+           class="combobox-item"
+         >
+           <ComboboxItemIndicator class="combobox-indicator">
+             <Icon name="check" class="h-4 w-4" />
+           </ComboboxItemIndicator>
+           <span>{{ option.label }}</span>
+         </ComboboxItem>
+       </ComboboxContent>
+     </ComboboxRoot>
+   </template>
+   ```
+
+5. **Dialog / Modal 组件使用规范**：
+   ```vue
+   <script setup lang="ts">
+   import {
+     DialogRoot,
+     DialogTrigger,
+     DialogPortal,
+     DialogOverlay,
+     DialogContent,
+     DialogTitle,
+     DialogDescription,
+     DialogClose
+   } from 'reka-ui';
+   
+   interface Props {
+     title: string;
+     description?: string;
+     size?: 'sm' | 'md' | 'lg' | 'xl';
+     modal?: boolean;
+   }
+   
+   const props = withDefaults(defineProps<Props>(), {
+     size: 'md',
+     modal: true
+   });
+   
+   const open = defineModel<boolean>('open');
+   </script>
+   
+   <template>
+     <DialogRoot v-model:open="open" :modal="modal">
+       <DialogTrigger as-child>
+         <slot name="trigger">
+           <Button>{{ t('common.open') }}</Button>
+         </slot>
+       </DialogTrigger>
+       
+       <DialogPortal>
+         <DialogOverlay class="dialog-overlay" />
+         <DialogContent :class="['dialog-content', `dialog-${size}`]">
+           <DialogTitle class="dialog-title">
+             {{ title }}
+           </DialogTitle>
+           
+           <DialogDescription v-if="description" class="dialog-description">
+             {{ description }}
+           </DialogDescription>
+           
+           <div class="dialog-body">
+             <slot />
+           </div>
+           
+           <div class="dialog-footer">
+             <slot name="footer">
+               <DialogClose as-child>
+                 <Button variant="outline">{{ t('common.close') }}</Button>
+               </DialogClose>
+             </slot>
+           </div>
+         </DialogContent>
+       </DialogPortal>
+     </DialogRoot>
+   </template>
+   ```
+
+### 3.2 组件开发规范
+
 1. **组件写法**：统一使用 `<script setup lang="ts">`，启用 TypeScript 严格模式
 2. **类型定义**：Props / Emits 必须完整类型化
    ```vue
@@ -54,7 +333,7 @@ alwaysApply: true
    - 页面：`resources/js/pages/**` - Inertia.js 页面组件
    - 布局：`resources/js/layouts/**` - 页面布局组件
    - 共享逻辑：`resources/js/composables/**` - 可复用的组合式函数
-   - UI 组件：`resources/js/components/ui/**` - 原子级 UI 组件
+   - UI 组件：`resources/js/components/ui/**` - 基于 Reka UI 的样式化组件
    - 业务组件：`resources/js/components/**` - 业务逻辑组件
 
 4. **组件命名**：
@@ -66,7 +345,150 @@ alwaysApply: true
    <user-profile :user="user" @update="handleUpdate" />
    ```
 
-### 3.2 样式与 UI 组件
+5. **无障碍性要求**：Reka UI 组件已内置无障碍性支持，但需要正确使用
+   ```vue
+   <script setup lang="ts">
+   // 使用 Reka UI 的无障碍性功能
+   import { useForwardExpose } from 'reka-ui';
+   
+   // 正确暴露组件引用
+   const { forwardRef } = useForwardExpose();
+   </script>
+   
+   <template>
+     <!-- 使用 as-child 属性进行组合 -->
+     <DialogTrigger as-child>
+       <Button :aria-label="t('dialog.openSettings')">
+         <Icon name="settings" />
+       </Button>
+     </DialogTrigger>
+   </template>
+   ```
+
+### 3.3 图标系统规范
+
+1. **优先使用项目集成图标**：必须优先使用项目已集成的图标系统，避免引入外部图标
+   ```vue
+   <script setup lang="ts">
+   // ✅ 正确：使用项目集成的 Icon 组件
+   import Icon from '@/components/Icon.vue';
+   
+   // ✅ 正确：直接导入 Lucide 图标
+   import { Search, Menu, Home } from 'lucide-vue-next';
+   
+   // ❌ 错误：引入其他图标库
+   import { FaHome } from '@fortawesome/vue-fontawesome';
+   import { MdHome } from 'react-icons/md';
+   </script>
+   
+   <template>
+     <!-- ✅ 正确：使用统一的 Icon 组件 -->
+     <Icon name="search" class="h-5 w-5" />
+     
+     <!-- ✅ 正确：直接使用 Lucide 组件 -->
+     <Search class="h-5 w-5" />
+     
+     <!-- ❌ 错误：使用外部图标 -->
+     <FaHome />
+   </template>
+   ```
+
+2. **图标使用层级规范**：
+   - **首选**：Lucide Vue Next 图标（覆盖大部分常用图标）
+   - **次选**：项目自定义 SVG 图标（如 AppLogoIcon）
+   - **特殊情况**：表情符号图标（仅限动态生成或装饰性用途）
+   ```vue
+   <script setup lang="ts">
+   // 业务图标使用 Lucide
+   import { User, Settings, Bell, Search } from 'lucide-vue-next';
+   
+   // 品牌图标使用自定义组件
+   import AppLogoIcon from '@/components/AppLogoIcon.vue';
+   </script>
+   ```
+
+3. **统一的 Icon 组件使用**：使用项目的统一 Icon 组件以保持一致性
+   ```vue
+   <script setup lang="ts">
+   import Icon from '@/components/Icon.vue';
+   
+   // Icon 组件支持的属性
+   interface IconProps {
+     name: string;        // 图标名称（首字母会自动大写）
+     class?: string;      // 自定义样式类
+     size?: number | string; // 图标大小
+     color?: string;      // 图标颜色
+     strokeWidth?: number | string; // 线条粗细
+   }
+   </script>
+   
+   <template>
+     <!-- 基础使用 -->
+     <Icon name="search" />
+     
+     <!-- 自定义大小和样式 -->
+     <Icon name="menu" class="text-gray-600" size="20" />
+     
+     <!-- 调整线条粗细 -->
+     <Icon name="heart" stroke-width="1.5" />
+   </template>
+   ```
+
+4. **图标尺寸标准化**：使用 Tailwind 预设尺寸类
+   ```vue
+   <template>
+     <!-- 小图标 -->
+     <Icon name="check" class="h-3 w-3" />
+     
+     <!-- 标准图标 -->
+     <Icon name="user" class="h-4 w-4" />
+     <Icon name="settings" class="h-5 w-5" />
+     
+     <!-- 大图标 -->
+     <Icon name="home" class="h-6 w-6" />
+     <Icon name="dashboard" class="h-8 w-8" />
+   </template>
+   ```
+
+5. **在 Reka UI 组件中使用图标**：正确在 Reka UI 组件中集成图标
+   ```vue
+   <template>
+     <!-- Context Menu 中的图标 -->
+     <ContextMenuItem class="flex items-center gap-2">
+       <Icon name="copy" class="h-4 w-4" />
+       <span>{{ t('contextMenu.copy') }}</span>
+       <span class="ml-auto text-xs text-muted-foreground">Ctrl+C</span>
+     </ContextMenuItem>
+     
+     <!-- Combobox 中的图标 -->
+     <ComboboxItem class="flex items-center gap-2">
+       <ComboboxItemIndicator>
+         <Icon name="check" class="h-4 w-4" />
+       </ComboboxItemIndicator>
+       <Icon name="folder" class="h-4 w-4 text-muted-foreground" />
+       <span>{{ option.label }}</span>
+     </ComboboxItem>
+   </template>
+   ```
+
+6. **可访问性要求**：所有图标都必须包含适当的可访问性属性
+   ```vue
+   <template>
+     <!-- 装饰性图标 -->
+     <Icon name="star" aria-hidden="true" />
+     
+     <!-- 功能性图标 -->
+     <button :aria-label="t('button.close')">
+       <Icon name="x" class="h-4 w-4" />
+     </button>
+     
+     <!-- 带文本说明的图标 -->
+     <Icon name="info" />
+     <span class="sr-only">{{ t('common.information') }}</span>
+   </template>
+   ```
+
+### 3.4 样式与 UI 组件
 
 1. **样式系统**：统一使用 **Tailwind CSS** 工具类，禁止裸写 CSS
    ```vue
@@ -119,26 +541,111 @@ alwaysApply: true
    </script>
    ```
 
-3. **UI 组件库**：基于 `reka-ui`（类 shadcn 套件）进行扩展
+3. **UI 组件库架构**：基于 Reka UI v2 的分层架构
    ```vue
    <script setup lang="ts">
+   // ✅ 第一层：Reka UI 原始组件（无样式，纯逻辑）
+   import { 
+     DialogRoot, 
+     DialogTrigger, 
+     DialogContent,
+     DialogTitle 
+   } from 'reka-ui';
+   
+   // ✅ 第二层：项目样式化组件（基于 Reka UI）
    import { Button } from '@/components/ui/button';
-   import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
    import { Input } from '@/components/ui/input';
+   
+   // ✅ 第三层：业务组件（组合样式化组件）
+   import UserForm from '@/components/UserForm.vue';
    </script>
    
    <template>
-     <Dialog>
-       <DialogContent>
-         <DialogHeader>
-           <DialogTitle>对话框标题</DialogTitle>
-         </DialogHeader>
+     <!-- 使用 Reka UI 原始组件构建 Dialog -->
+     <DialogRoot>
+       <DialogTrigger as-child>
+         <Button>{{ t('dialog.open') }}</Button>
+       </DialogTrigger>
+       
+       <DialogContent class="dialog-content">
+         <DialogTitle class="dialog-title">
+           {{ t('user.createTitle') }}
+         </DialogTitle>
+         
          <div class="space-y-4">
-           <Input placeholder="请输入内容" />
-           <Button @click="handleSubmit">确认</Button>
+           <Input 
+             :placeholder="t('form.namePlaceholder')" 
+             v-model="form.name"
+           />
+           <Button @click="handleSubmit">
+             {{ t('common.confirm') }}
+           </Button>
          </div>
        </DialogContent>
-     </Dialog>
+     </DialogRoot>
+   </template>
+   ```
+
+4. **Reka UI 组件组合模式**：使用 `as-child` 属性进行组件组合
+   ```vue
+   <script setup lang="ts">
+   import { 
+     DropdownMenuRoot,
+     DropdownMenuTrigger,
+     DropdownMenuContent,
+     DropdownMenuItem
+   } from 'reka-ui';
+   import { Button } from '@/components/ui/button';
+   </script>
+   
+   <template>
+     <DropdownMenuRoot>
+       <!-- as-child 允许将 Button 组件作为触发器 -->
+       <DropdownMenuTrigger as-child>
+         <Button variant="outline">
+           <Icon name="more-horizontal" class="h-4 w-4" />
+         </Button>
+       </DropdownMenuTrigger>
+       
+       <DropdownMenuContent>
+         <DropdownMenuItem @select="handleEdit">
+           {{ t('common.edit') }}
+         </DropdownMenuItem>
+         <DropdownMenuItem @select="handleDelete">
+           {{ t('common.delete') }}
+         </DropdownMenuItem>
+       </DropdownMenuContent>
+     </DropdownMenuRoot>
+   </template>
+   ```
+
+5. **Reka UI 状态管理模式**：使用 v-model 进行状态双向绑定
+   ```vue
+   <script setup lang="ts">
+   import { DialogRoot, TooltipRoot, PopoverRoot } from 'reka-ui';
+   
+   // 统一的状态管理模式
+   const dialogOpen = ref(false);
+   const tooltipOpen = ref(false);
+   const popoverOpen = ref(false);
+   
+   // 使用 v-model 进行双向绑定
+   const selectedValues = ref<string[]>([]);
+   </script>
+   
+   <template>
+     <!-- 所有 Reka UI Root 组件都支持 v-model -->
+     <DialogRoot v-model:open="dialogOpen">
+       <!-- Dialog 内容 -->
+     </DialogRoot>
+     
+     <PopoverRoot v-model:open="popoverOpen">
+       <!-- Popover 内容 -->
+     </PopoverRoot>
+     
+     <ComboboxRoot v-model="selectedValues" multiple>
+       <!-- Combobox 内容 -->
+     </ComboboxRoot>
    </template>
    ```
 
@@ -154,7 +661,193 @@ alwaysApply: true
    </template>
    ```
 
-### 3.3 状态管理与数据流
+### 3.5 国际化与多语言支持
+
+1. **绝对禁止硬编码文本**：任何显示给用户的文本都必须使用 i18n 国际化系统
+   ```vue
+   <script setup lang="ts">
+   import { useI18n } from 'vue-i18n';
+   
+   const { t } = useI18n();
+   
+   // ❌ 错误：硬编码中文文本
+   const props = withDefaults(defineProps<Props>(), {
+     meta: () => ({
+       title: '仪表板',  // 绝对禁止！
+       icon: '📊',
+       closable: false
+     })
+   });
+   
+   // ✅ 正确：使用 i18n 国际化
+   const props = withDefaults(defineProps<Props>(), {
+     meta: () => ({
+       title: t('dashboard.title'),  // 使用国际化
+       icon: '📊',
+       closable: false
+     })
+   });
+   </script>
+   
+   <template>
+     <!-- ❌ 错误：硬编码文本 -->
+     <h1>用户管理</h1>
+     <button>确认</button>
+     
+     <!-- ✅ 正确：使用 i18n -->
+     <h1>{{ t('user.management') }}</h1>
+     <button>{{ t('common.confirm') }}</button>
+   </template>
+   ```
+
+2. **多语言文件组织**：按模块组织语言文件
+   ```typescript
+   // resources/js/i18n/locales/zh.json
+   {
+     "common": {
+       "confirm": "确认",
+       "cancel": "取消",
+       "save": "保存",
+       "delete": "删除",
+       "edit": "编辑",
+       "loading": "加载中..."
+     },
+     "dashboard": {
+       "title": "仪表板",
+       "welcome": "欢迎回来"
+     },
+     "user": {
+       "management": "用户管理",
+       "profile": "用户资料",
+       "create": "创建用户"
+     }
+   }
+   
+   // resources/js/i18n/locales/en.json
+   {
+     "common": {
+       "confirm": "Confirm",
+       "cancel": "Cancel",
+       "save": "Save",
+       "delete": "Delete",
+       "edit": "Edit",
+       "loading": "Loading..."
+     },
+     "dashboard": {
+       "title": "Dashboard",
+       "welcome": "Welcome back"
+     },
+     "user": {
+       "management": "User Management",
+       "profile": "User Profile",
+       "create": "Create User"
+     }
+   }
+   ```
+
+3. **动态文本与插值**：正确使用 i18n 插值功能
+   ```vue
+   <script setup lang="ts">
+   const { t } = useI18n();
+   const userName = ref('张三');
+   
+   // ❌ 错误：字符串拼接
+   const welcomeMessage = `欢迎回来，${userName.value}！`;
+   
+   // ✅ 正确：使用 i18n 插值
+   const welcomeMessage = computed(() => 
+     t('dashboard.welcomeUser', { name: userName.value })
+   );
+   </script>
+   
+   <template>
+     <!-- 使用插值 -->
+     <p>{{ t('dashboard.welcomeUser', { name: user.name }) }}</p>
+     
+     <!-- 复数形式 -->
+     <p>{{ t('item.count', itemCount, { count: itemCount }) }}</p>
+   </template>
+   ```
+
+4. **表单验证消息**：验证错误消息也必须国际化
+   ```typescript
+   // 表单验证规则
+   const rules = {
+     email: [
+       {
+         required: true,
+         message: t('validation.email.required'), // 使用 i18n
+         trigger: 'blur'
+       },
+       {
+         type: 'email',
+         message: t('validation.email.format'),
+         trigger: 'blur'
+       }
+     ]
+   };
+   ```
+
+5. **组件 Props 默认值**：组件属性默认值也不能硬编码
+   ```vue
+   <script setup lang="ts">
+   import { useI18n } from 'vue-i18n';
+   
+   interface Props {
+     title?: string;
+     confirmText?: string;
+     cancelText?: string;
+   }
+   
+   const { t } = useI18n();
+   
+   // ✅ 正确：使用 i18n 作为默认值
+   const props = withDefaults(defineProps<Props>(), {
+     title: () => t('dialog.defaultTitle'),
+     confirmText: () => t('common.confirm'),
+     cancelText: () => t('common.cancel')
+   });
+   </script>
+   ```
+
+6. **日期时间格式化**：使用国际化的日期时间格式
+   ```vue
+   <script setup lang="ts">
+   import { useI18n } from 'vue-i18n';
+   
+   const { locale, d, t } = useI18n();
+   
+   // 格式化日期
+   const formatDate = (date: Date) => {
+     return d(date, 'short'); // 使用本地化日期格式
+   };
+   
+   // 相对时间
+   const relativeTime = (date: Date) => {
+     const rtf = new Intl.RelativeTimeFormat(locale.value);
+     // 计算相对时间逻辑...
+   };
+   </script>
+   ```
+
+7. **无障碍性与国际化**：确保 ARIA 标签也国际化
+   ```vue
+   <template>
+     <button 
+       :aria-label="t('button.closeDialog')"
+       @click="closeDialog"
+     >
+       <Icon name="close" />
+     </button>
+     
+     <input 
+       :placeholder="t('form.searchPlaceholder')"
+       :aria-describedby="t('form.searchDescription')"
+     />
+   </template>
+   ```
+
+### 3.6 状态管理与数据流
 
 1. **全局状态**：封装到 Vue composable 中，避免跨层级 prop drilling
    ```typescript
@@ -224,87 +917,7 @@ alwaysApply: true
    </template>
    ```
 
-### 3.4 Inertia.js 集成
-
-1. **页面组件**：Inertia.js 页面组件的标准结构
-   ```vue
-   <script setup lang="ts">
-   import AppLayout from '@/layouts/AppLayout.vue';
-   import { Head, useForm } from '@inertiajs/vue3';
-   
-   // 定义页面 Props 类型
-   interface Props {
-     users: Array<{
-       id: number;
-       name: string;
-       email: string;
-     }>;
-     pagination: {
-       current_page: number;
-       last_page: number;
-       total: number;
-     };
-   }
-   
-   const props = defineProps<Props>();
-   
-   // 使用 Inertia 表单
-   const form = useForm({
-     name: '',
-     email: '',
-   });
-   
-   const submit = () => {
-     form.post('/users', {
-       onSuccess: () => {
-         form.reset();
-       },
-     });
-   };
-   </script>
-   
-   <template>
-     <Head title="用户管理" />
-     
-     <AppLayout>
-       <div class="max-w-7xl mx-auto py-6">
-         <h1 class="text-2xl font-bold mb-6">用户管理</h1>
-         
-         <!-- 用户列表 -->
-         <div class="bg-white shadow rounded-lg">
-           <div v-for="user in users" :key="user.id" class="p-4 border-b">
-             {{ user.name }} - {{ user.email }}
-           </div>
-         </div>
-       </div>
-     </AppLayout>
-   </template>
-   ```
-
-2. **路由处理**：使用 Ziggy 生成的路由
-   ```vue
-   <script setup lang="ts">
-   import { router } from '@inertiajs/vue3';
-   import { route } from 'ziggy-js';
-   
-   const navigateToUser = (userId: number) => {
-     router.get(route('users.show', { user: userId }));
-   };
-   
-   const updateUser = (userId: number, data: UserData) => {
-     router.put(route('users.update', { user: userId }), data, {
-       onSuccess: () => {
-         // 成功回调
-       },
-       onError: (errors) => {
-         // 错误处理
-       },
-     });
-   };
-   </script>
-   ```
-
-### 3.5 SSR 与性能
+### 3.7 SSR 与性能
 
 1. **SSR 支持**：涉及服务器端渲染的代码，需同时修改 `app.ts` 与 `ssr.ts`
    ```typescript
@@ -343,8 +956,8 @@ alwaysApply: true
    const HeavyChart = defineAsyncComponent(() => import('@/components/HeavyChart.vue'));
    const DataTable = defineAsyncComponent({
      loader: () => import('@/components/DataTable.vue'),
-     loadingComponent: () => h('div', '加载中...'),
-     errorComponent: () => h('div', '加载失败'),
+     loadingComponent: () => h('div', t('common.loading')),
+     errorComponent: () => h('div', t('common.loadError')),
      delay: 200,
      timeout: 3000,
    });
@@ -367,7 +980,7 @@ alwaysApply: true
    </template>
    ```
 
-### 3.6 代码质量
+### 3.8 代码质量
 
 1. **依赖管理**：新增依赖后，确保更新 `package.json` 并执行 `npm run lint && npm run format`
    ```json
@@ -420,39 +1033,153 @@ alwaysApply: true
 
 ## 4. 测试策略
 
-### 4.1 组件测试
-1. **测试框架**：使用 Vitest + Vue Test Utils
+### 4.1 Reka UI 组件测试
+1. **测试框架**：使用 Vitest + Vue Test Utils + Testing Library
    ```typescript
-   // UserCard.test.ts
+   // ContextMenu.test.ts
    import { mount } from '@vue/test-utils';
-   import { describe, it, expect } from 'vitest';
-   import UserCard from '@/components/UserCard.vue';
+   import { describe, it, expect, vi } from 'vitest';
+   import { fireEvent, screen } from '@testing-library/vue';
+   import TabContextMenu from '@/components/TabContextMenu.vue';
    
-   describe('UserCard', () => {
-     it('应该正确显示用户信息', () => {
-       const user = {
-         id: 1,
-         name: '张三',
-         email: 'zhangsan@example.com',
-       };
-       
-       const wrapper = mount(UserCard, {
-         props: { user },
+   describe('TabContextMenu', () => {
+     it('应该正确显示上下文菜单项', async () => {
+       const closeTab = vi.fn();
+       const wrapper = mount(TabContextMenu, {
+         props: { 
+           tabId: '1',
+           onClose: closeTab 
+         },
+         global: {
+           plugins: [i18n] // 确保测试环境包含 i18n
+         }
        });
        
-       expect(wrapper.text()).toContain('张三');
-       expect(wrapper.text()).toContain('zhangsan@example.com');
+       // 触发右键点击
+       await wrapper.find('[data-testid="tab-trigger"]').trigger('contextmenu');
+       
+       // 验证菜单项是否显示
+       expect(screen.getByText(t('tab.close'))).toBeInTheDocument();
+       expect(screen.getByText(t('tab.closeOthers'))).toBeInTheDocument();
      });
      
-     it('点击编辑按钮应该触发编辑事件', async () => {
-       const wrapper = mount(UserCard, {
-         props: { user: { id: 1, name: '张三' } },
+     it('应该在点击菜单项时触发相应操作', async () => {
+       const closeTab = vi.fn();
+       const wrapper = mount(TabContextMenu, {
+         props: { 
+           tabId: '1',
+           onClose: closeTab 
+         },
+         global: {
+           plugins: [i18n]
+         }
        });
        
-       await wrapper.find('[data-testid="edit-button"]').trigger('click');
+       // 打开上下文菜单
+       await wrapper.find('[data-testid="tab-trigger"]').trigger('contextmenu');
        
-       expect(wrapper.emitted('edit')).toBeTruthy();
-       expect(wrapper.emitted('edit')[0]).toEqual([1]);
+       // 点击关闭菜单项
+       await fireEvent.click(screen.getByText(t('tab.close')));
+       
+       expect(closeTab).toHaveBeenCalledWith('1');
+     });
+     
+     it('应该正确处理键盘快捷键', async () => {
+       const closeTab = vi.fn();
+       mount(TabContextMenu, {
+         props: { 
+           tabId: '1',
+           onClose: closeTab 
+         },
+         global: {
+           plugins: [i18n]
+         }
+       });
+       
+       // 模拟 Ctrl+W 快捷键
+       await fireEvent.keyDown(document, { 
+         key: 'w', 
+         ctrlKey: true 
+       });
+       
+       expect(closeTab).toHaveBeenCalledWith('1');
+     });
+   });
+   ```
+
+2. **Reka UI 组件无障碍性测试**：确保组件符合 WAI-ARIA 标准
+   ```typescript
+   // accessibility.test.ts
+   import { mount } from '@vue/test-utils';
+   import { describe, it, expect } from 'vitest';
+   import { axe, toHaveNoViolations } from 'jest-axe';
+   import Dialog from '@/components/ui/Dialog.vue';
+   
+   expect.extend(toHaveNoViolations);
+   
+   describe('Dialog Accessibility', () => {
+     it('应该符合无障碍性标准', async () => {
+       const wrapper = mount(Dialog, {
+         props: {
+           open: true,
+           title: '测试对话框',
+           description: '这是一个测试对话框'
+         },
+         global: {
+           plugins: [i18n]
+         }
+       });
+       
+       const results = await axe(wrapper.element);
+       expect(results).toHaveNoViolations();
+     });
+     
+     it('应该正确处理焦点管理', async () => {
+       const wrapper = mount(Dialog, {
+         props: {
+           open: true,
+           title: '测试对话框'
+         },
+         global: {
+           plugins: [i18n]
+         }
+       });
+       
+       // 验证对话框打开时焦点是否正确设置
+       const dialog = wrapper.find('[role="dialog"]');
+       expect(dialog.element).toHaveFocus();
+       
+       // 验证按 ESC 键是否关闭对话框
+       await fireEvent.keyDown(dialog.element, { key: 'Escape' });
+       expect(wrapper.emitted('update:open')).toBeTruthy();
+       expect(wrapper.emitted('update:open')[0]).toEqual([false]);
+     });
+   });
+   ```
+
+3. **组件集成测试**：测试 Reka UI 组件与业务逻辑的集成
+   ```typescript
+   // UserManagement.test.ts
+   import { mount } from '@vue/test-utils';
+   import { describe, it, expect, vi } from 'vitest';
+   import UserManagement from '@/pages/UserManagement.vue';
+   
+   describe('UserManagement', () => {
+     it('应该正确显示用户列表', () => {
+       const users = [
+         { id: 1, name: 'John Doe', email: 'john@example.com' },
+         { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+       ];
+       
+       const wrapper = mount(UserManagement, {
+         props: { users },
+         global: {
+           plugins: [i18n]
+         }
+       });
+       
+       expect(wrapper.text()).toContain('John Doe');
+       expect(wrapper.text()).toContain('Jane Smith');
      });
    });
    ```
@@ -462,7 +1189,7 @@ alwaysApply: true
    // tests/e2e/login.spec.ts
    import { test, expect } from '@playwright/test';
    
-   test('用户可以成功登录', async ({ page }) => {
+   test('user can login successfully', async ({ page }) => {
      await page.goto('/login');
      
      // 填写登录表单
@@ -484,7 +1211,7 @@ alwaysApply: true
      <!-- 正确的可访问性实践 -->
      <button
        type="button"
-       :aria-label="isExpanded ? '收起菜单' : '展开菜单'"
+       :aria-label="isExpanded ? t('menu.collapse') : t('menu.expand')"
        :aria-expanded="isExpanded"
        @click="toggleMenu"
      >
@@ -595,15 +1322,158 @@ alwaysApply: true
 2. **变更记录**：重大变更更新 `CHANGELOG.md`
 3. **类型定义**：为复杂类型创建独立的类型定义文件
 
-## 8. Git 提交约定
+## 8. Reka UI 性能优化
+
+### 8.1 组件懒加载
+1. **按需导入 Reka UI 组件**：只导入需要的组件
+   ```vue
+   <script setup lang="ts">
+   // ✅ 正确：按需导入
+   import { 
+     DialogRoot, 
+     DialogContent,
+     DialogTitle 
+   } from 'reka-ui';
+   
+   // ❌ 错误：导入整个库
+   import * as RekaUI from 'reka-ui';
+   </script>
+   ```
+
+2. **动态导入大型组件**：对于复杂的 Reka UI 组件组合
+   ```vue
+   <script setup lang="ts">
+   // 动态导入复杂的数据表格组件
+   const DataTable = defineAsyncComponent(
+     () => import('@/components/DataTable.vue')
+   );
+   
+   // 动态导入富文本编辑器
+   const RichTextEditor = defineAsyncComponent({
+     loader: () => import('@/components/RichTextEditor.vue'),
+     loadingComponent: () => h('div', t('common.loading')),
+     errorComponent: () => h('div', t('common.loadError')),
+     delay: 200,
+     timeout: 5000
+   });
+   </script>
+   ```
+
+### 8.2 Reka UI 状态优化
+1. **使用 shallowRef 优化状态**：对于不需要深层响应式的数据
+   ```vue
+   <script setup lang="ts">
+   import { shallowRef } from 'vue';
+   
+   // 对于大型数据集，使用 shallowRef
+   const tableData = shallowRef<TableRow[]>([]);
+   const comboboxOptions = shallowRef<ComboboxOption[]>([]);
+   
+   // 对于简单状态，使用 ref
+   const dialogOpen = ref(false);
+   const selectedValue = ref('');
+   </script>
+   ```
+
+2. **优化 Combobox 搜索性能**：使用防抖和缓存
+   ```vue
+   <script setup lang="ts">
+   import { useDebounceFn } from '@vueuse/core';
+   
+   const searchTerm = ref('');
+   const searchResults = ref<SearchResult[]>([]);
+   const searchCache = new Map<string, SearchResult[]>();
+   
+   // 防抖搜索函数
+   const debouncedSearch = useDebounceFn(async (term: string) => {
+     if (searchCache.has(term)) {
+       searchResults.value = searchCache.get(term)!;
+       return;
+     }
+     
+     const results = await performSearch(term);
+     searchCache.set(term, results);
+     searchResults.value = results;
+   }, 300);
+   
+   watch(searchTerm, debouncedSearch);
+   </script>
+   ```
+
+### 8.3 Portal 性能优化
+1. **合理使用 Portal**：避免过度使用 Portal 组件
+   ```vue
+   <script setup lang="ts">
+   // ✅ 正确：只对需要突破层级的组件使用 Portal
+   const usePortal = computed(() => {
+     return props.modal || props.fullscreen;
+   });
+   </script>
+   
+   <template>
+     <DialogRoot>
+       <DialogTrigger>打开对话框</DialogTrigger>
+       
+       <!-- 条件性使用 Portal -->
+       <DialogPortal v-if="usePortal">
+         <DialogContent>...</DialogContent>
+       </DialogPortal>
+       
+       <DialogContent v-else>...</DialogContent>
+     </DialogRoot>
+   </template>
+   ```
+
+## 9. 国际化检查清单
+
+### 9.1 开发阶段必检项目
+- [ ] **绝对没有硬编码文本**：检查所有 `.vue` 文件中是否存在硬编码的显示文本
+- [ ] **组件属性默认值**：确保 `defineProps` 的默认值使用 `t()` 函数
+- [ ] **模板中的文本**：所有 `<template>` 中的用户可见文本使用 `{{ t('key') }}`
+- [ ] **属性和标签**：`title`、`placeholder`、`aria-label` etc. 使用国际化
+- [ ] **动态消息**：错误提示、验证消息、通知消息使用国际化
+- [ ] **测试文件**：测试用例描述使用英文，测试数据避免硬编码中文
+- [ ] **图标使用规范**：优先使用 Lucide Vue Next 图标，避免引入外部图标库
+- [ ] **图标可访问性**：功能性图标必须有 `aria-label`，装饰性图标使用 `aria-hidden="true"`
+- [ ] **Reka UI 组件**：确保所有 Reka UI 组件的文本内容都使用国际化
+- [ ] **上下文菜单**：Context Menu 的所有菜单项都使用 `t()` 函数
+
+### 9.2 代码审查检查点
+```typescript
+// ❌ 需要修正的模式
+const title = '用户管理';
+placeholder="请输入用户名"
+<h1>订单列表</h1>
+message: '邮箱格式不正确'
+aria-label="关闭对话框"
+import { FaHome } from '@fortawesome/vue-fontawesome';
+
+// ✅ 正确的模式  
+const title = t('user.management');
+:placeholder="t('form.usernamePlaceholder')"
+<h1>{{ t('order.list') }}</h1>
+message: t('validation.email.invalid')
+:aria-label="t('dialog.close')"
+import { Home } from 'lucide-vue-next';
+import Icon from '@/components/Icon.vue';
+```
+
+### 9.3 国际化文件维护
+- [ ] **键名规范**：使用模块化的键名结构 `module.action` 或 `module.item`
+- [ ] **同步更新**：添加新文本时同步更新所有语言文件
+- [ ] **插值使用**：动态内容使用插值而非字符串拼接
+- [ ] **复数形式**：数量相关文本正确使用复数规则
+
+## 10. Git 提交约定
 使用 **Conventional Commits** 格式：`<type>(<scope>): <subject>`
 
 **前端相关示例**：
-- `feat(ui): 新增用户头像组件`
-- `fix(auth): 修复登录表单验证逻辑`
-- `style(button): 调整按钮样式和响应式布局`
-- `test(user): 添加用户组件单元测试`
-- `refactor(composables): 重构用户状态管理逻辑`
+- `feat(ui): add user avatar component`
+- `fix(auth): resolve login form validation issue`
+- `style(button): adjust button styles and responsive layout`
+- `test(user): add user component unit tests`
+- `refactor(composables): restructure user state management logic`
+- `i18n(frontend): add internationalization support for dashboard`
 
 ---
 

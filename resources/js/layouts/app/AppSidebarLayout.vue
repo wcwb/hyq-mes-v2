@@ -2,23 +2,20 @@
 import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
-import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
-import type { BreadcrumbItemType } from '@/types';
-
-interface Props {
-    breadcrumbs?: BreadcrumbItemType[];
-}
-
-withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
-});
+import TopMenuBar from '@/components/TopMenuBar.vue';
+import TabNavigation from '@/components/TabNavigation.vue';
 </script>
 
 <template>
     <AppShell variant="sidebar">
         <AppSidebar />
         <AppContent variant="sidebar">
-            <AppSidebarHeader :breadcrumbs="breadcrumbs" />
+            <TopMenuBar class="sticky top-0 z-50">
+                <template #tab-navigation>
+                    <TabNavigation />
+                </template>
+            </TopMenuBar>
+
             <slot />
         </AppContent>
     </AppShell>

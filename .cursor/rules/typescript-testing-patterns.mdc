@@ -1,0 +1,364 @@
+---
+description: TypeScript 测试模式规则
+globs: 
+alwaysApply: false
+---
+# TypeScript 测试模式规则
+
+> 基于子任务5.2经验总结的TypeScript测试最佳实践
+
+## 🎯 类型安全测试核心原则
+
+### 1. 编译时 + 运行时双重验证
+```typescript
+// ✅ 好的做法：编译时类型 + 运行时验证
+it('type safety validation', () => {
+  const instance: ExpectedInterface = createInstance() // 编译时类型检查
+  
+  // 运行时类型验证
+  expect(typeof instance.method).toBe('function')
+  expect(typeof instance.property).toBe('string')
+  expect(Array.isArray(instance.list)).toBe(true)
+})
+```
+
+### 2. 泛型类型测试模式
+```typescript
+// 泛型composable测试
+describe('generic composable', () => {
+  it('should work with string type', () => {
+    const instance = useGenericComposable<string>()
+    
+    // 类型断言 + 运行时验证
+    const result: string = instance.getValue()
+    expect(typeof result).toBe('string')
+  })
+  
+  it('should work with number type', () => {
+    const instance = useGenericComposable<number>()
+    
+    const result: number = instance.getValue()
+    expect(typeof result).toBe('number')
+  })
+})
+```
+
+## 🔍 响应式类型测试模式
+
+### Vue 3 响应式属性类型验证
+```typescript
+import type { Ref, ComputedRef } from 'vue'
+
+describe('reactive types', () => {
+  it('should return correct reactive types', () => {
+    const composable = useComposable()
+    
+    // Ref 类型验证
+    const refValue: Ref<string> = composable.refProperty
+    expect(refValue.value).toBeDefined()
+    expect(typeof refValue.value).toBe('string')
+    
+    // ComputedRef 类型验证  
+    const computedValue: ComputedRef<boolean> = composable.computedProperty
+    expect(computedValue.value).toBeDefined()
+    expect(typeof computedValue.value).toBe('boolean')
+    
+    // 只读对象验证
+    const config: Readonly<ConfigType> = composable.config
+    expect(typeof config.storageKey).toBe('string')
+    expect(typeof config.version).toBe('string')
+  })
+})
+```
+
+### 常见响应式类型识别模式
+```typescript
+// 类型识别辅助函数
+const isRef = (value: any): value is Ref => {
+  return value && typeof value === 'object' && 'value' in value
+}
+
+const isComputed = (value: any): value is ComputedRef => {
+  return isRef(value) && value.effect !== undefined
+}
+
+const isReactive = (value: any): value is ReactiveObject => {
+  return value && typeof value === 'object' && !isRef(value)
+}
+
+// 测试中使用
+it('should identify reactive types correctly', () => {
+  const composable = useComposable()
+  
+  expect(isRef(composable.refProperty)).toBe(true)
+  expect(isComputed(composable.computedProperty)).toBe(true)
+  expect(isReactive(composable.reactiveObject)).toBe(true)
+})
+```
+
+## 🛡️ 接口契约测试模式
+
+### 1. 严格接口验证
+```typescript
+interface ExpectedComposableAPI {
+  // 方法签名
+  saveState: (data: any[], activeId: string | null) => Promise<boolean>
+  loadState: () => Promise<StateType | null>
+  clearState: () => Promise<boolean>
+  
+  // 响应式属性
+  hasValidData: ComputedRef<boolean>
+  isExpired: ComputedRef<boolean>
+  syncErrors: Readonly<Ref<Error[]>>
+  
+  // 配置对象
+  config: Readonly<ConfigType>
+}
+
+it('should implement expected API contract', () => {
+  const composable = useComposable()
+  
+  // 验证方法存在且类型正确
+  expect(typeof composable.saveState).toBe('function')
+  expect(typeof composable.loadState).toBe('function')
+  expect(typeof composable.clearState).toBe('function')
+  
+  // 验证响应式属性
+  expect(composable.hasValidData.value).toBeDefined()
+  expect(composable.isExpired.value).toBeDefined()
+  expect(Array.isArray(composable.syncErrors.value)).toBe(true)
+  
+  // 验证配置对象
+  expect(typeof composable.config).toBe('object')
+  expect(typeof composable.config.storageKey).toBe('string')
+})
+```
+
+### 2. 方法签名验证模式
+```typescript
+// 方法参数类型验证
+it('should accept correct parameter types', async () => {
+  const composable = useComposable()
+  
+  // 正确的参数类型应该成功
+  const validData: TabItem[] = [{ id: '1', title: 'Test', route: '/test' }]
+  const result = await composable.saveState(validData, 'active-id')
+  expect(typeof result).toBe('boolean')
+  
+  // TypeScript 应该在编译时捕获错误参数
+  // composable.saveState('invalid', 123) // 编译错误
+})
+
+// 返回值类型验证
+it('should return correct types', async () => {
+  const composable = useComposable()
+  
+  const saveResult = await composable.saveState([], null)
+  expect(typeof saveResult).toBe('boolean')
+  
+  const loadResult = await composable.loadState()
+  expect(loadResult === null || typeof loadResult === 'object').toBe(true)
+  
+  if (loadResult !== null) {
+    expect(Array.isArray(loadResult.tabs)).toBe(true)
+    expect(typeof loadResult.activeTabId === 'string' || loadResult.activeTabId === null).toBe(true)
+  }
+})
+```
+
+## 🔧 类型守卫测试模式
+
+### 自定义类型守卫
+```typescript
+// 类型守卫定义
+const isTabItem = (item: any): item is TabItem => {
+  return (
+    typeof item === 'object' &&
+    typeof item.id === 'string' &&
+    typeof item.title === 'string' &&
+    typeof item.route === 'string' &&
+    typeof item.lastAccessed === 'number' &&
+    typeof item.createdAt === 'number'
+  )
+}
+
+// 类型守卫测试
+describe('type guards', () => {
+  it('should correctly identify valid TabItem', () => {
+    const validTab: TabItem = {
+      id: 'test-id',
+      title: 'Test Tab',
+      route: '/test',
+      lastAccessed: Date.now(),
+      createdAt: Date.now()
+    }
+    
+    expect(isTabItem(validTab)).toBe(true)
+  })
+  
+  it('should reject invalid objects', () => {
+    const invalidTab = { id: 'test', title: 123 } // title应该是string
+    expect(isTabItem(invalidTab)).toBe(false)
+  })
+})
+```
+
+### 运行时类型验证器
+```typescript
+// 通用类型验证器
+const validateObjectShape = <T>(
+  obj: any, 
+  schema: Record<keyof T, string>
+): obj is T => {
+  return Object.entries(schema).every(([key, expectedType]) => {
+    const actualType = typeof obj[key]
+    return actualType === expectedType
+  })
+}
+
+// 使用示例
+it('should validate object shapes', () => {
+  const testObject = {
+    name: 'test',
+    age: 25,
+    active: true
+  }
+  
+  const isValid = validateObjectShape<{
+    name: string
+    age: number  
+    active: boolean
+  }>(testObject, {
+    name: 'string',
+    age: 'number',
+    active: 'boolean'
+  })
+  
+  expect(isValid).toBe(true)
+})
+```
+
+## 📊 类型错误调试模式
+
+### 1. 类型信息提取器
+```typescript
+// 调试类型信息的辅助工具
+const getTypeInfo = (value: any) => ({
+  type: typeof value,
+  constructor: value?.constructor?.name,
+  isArray: Array.isArray(value),
+  isNull: value === null,
+  isUndefined: value === undefined,
+  keys: typeof value === 'object' ? Object.keys(value || {}) : []
+})
+
+it('debug type information', () => {
+  const composable = useComposable()
+  
+  console.log('Composable structure:', getTypeInfo(composable))
+  console.log('hasValidData:', getTypeInfo(composable.hasValidData))
+  console.log('config:', getTypeInfo(composable.config))
+  
+  // 基于输出信息调整测试断言
+})
+```
+
+### 2. 类型兼容性测试
+```typescript
+// 测试类型兼容性
+describe('type compatibility', () => {
+  it('should be compatible with expected interfaces', () => {
+    const composable = useComposable()
+    
+    // 尝试赋值给期望的接口类型
+    const api: ExpectedAPI = composable // 编译时检查
+    
+    // 运行时验证关键属性
+    expect(api.saveState).toBeDefined()
+    expect(api.loadState).toBeDefined()
+  })
+  
+  it('should handle optional properties correctly', () => {
+    interface OptionalProps {
+      required: string
+      optional?: number
+    }
+    
+    const testObj: OptionalProps = { required: 'test' }
+    
+    expect(testObj.required).toBe('test')
+    expect(testObj.optional).toBeUndefined()
+  })
+})
+```
+
+## 🎯 配置对象类型测试
+
+### 配置验证模式
+```typescript
+// 配置对象类型测试
+describe('configuration types', () => {
+  it('should accept valid configuration', () => {
+    const validConfig: ConfigType = {
+      storageKey: 'test-key',
+      version: '1.0.0',
+      autoSync: true,
+      expireTime: 1000
+    }
+    
+    const composable = useComposable(validConfig)
+    expect(composable.config.storageKey).toBe('test-key')
+  })
+  
+  it('should handle partial configuration', () => {
+    const partialConfig: Partial<ConfigType> = {
+      storageKey: 'partial-key'
+    }
+    
+    const composable = useComposable(partialConfig)
+    expect(composable.config.storageKey).toBe('partial-key')
+    // 其他属性应该使用默认值
+  })
+  
+  it('should merge with defaults correctly', () => {
+    const composable = useComposable({ storageKey: 'custom' })
+    
+    // 自定义值
+    expect(composable.config.storageKey).toBe('custom')
+    
+    // 默认值
+    expect(typeof composable.config.version).toBe('string')
+    expect(typeof composable.config.autoSync).toBe('boolean')
+  })
+})
+```
+
+## 📋 TypeScript测试检查清单
+
+### 编译时检查
+- [ ] 所有类型注解正确
+- [ ] 泛型使用恰当
+- [ ] 接口实现完整
+- [ ] 类型导入正确
+
+### 运行时验证
+- [ ] 响应式属性类型验证（.value访问）
+- [ ] 方法返回值类型验证
+- [ ] 配置对象结构验证
+- [ ] 错误处理类型安全
+
+### 兼容性检查
+- [ ] 接口契约符合预期
+- [ ] 可选属性处理正确
+- [ ] 类型守卫工作正常
+- [ ] 泛型约束有效
+
+## 🚀 最佳实践总结
+
+1. **双重验证**：编译时类型检查 + 运行时类型验证
+2. **渐进式验证**：从基础类型到复杂接口
+3. **类型守卫**：使用类型守卫确保运行时类型安全
+4. **调试友好**：提供类型信息提取工具
+5. **文档同步**：确保类型定义与实际行为一致
+
+这些模式将帮助创建类型安全且可靠的TypeScript测试套件。 
