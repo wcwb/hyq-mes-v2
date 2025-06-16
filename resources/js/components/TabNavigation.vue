@@ -62,24 +62,10 @@ const handleTabReorder = (fromIndex: number, toIndex: number) => {
 <template>
     <!-- 使用基于Reka UI的TabContainer组件 -->
     <!-- 注意：content-class="hidden" 因为我们使用Inertia.js路由，内容由页面组件渲染 -->
+    <!-- 添加 scrollbar-none 类来隐藏滚动条，符合 Tailwind CSS 规范 -->
     <TabContainer :tabs="tabItems" :active-tab-id="activeTabId" :show-management-menu="tabs.length > 1"
-        :enable-drag-sort="false" :max-tab-width="'12rem'" container-class="h-auto"
-        tab-bar-class="border-b-0 bg-transparent" content-class="hidden" @tab-click="handleTabClick"
-        @tab-close="handleTabClose" @close-others="handleCloseOthers" @close-all="handleCloseAll"
-        @tab-reorder="handleTabReorder" />
+        :enable-drag-sort="false" :max-tab-width="'12rem'" container-class="h-auto scrollbar-none"
+        tab-bar-class="border-b-0 bg-transparent overflow-x-auto scrollbar-none" content-class="hidden"
+        @tab-click="handleTabClick" @tab-close="handleTabClose" @close-others="handleCloseOthers"
+        @close-all="handleCloseAll" @tab-reorder="handleTabReorder" />
 </template>
-
-<style scoped>
-/* 确保Tab容器可以横向滚动 */
-.overflow-x-auto {
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE and Edge */
-}
-
-.overflow-x-auto::-webkit-scrollbar {
-    display: none;
-    /* Chrome, Safari, Opera */
-}
-</style>
